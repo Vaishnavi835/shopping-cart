@@ -5,6 +5,9 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config();
 
+// Use the same DB connection logic as the server (includes DNS fallback & direct URI)
+const connectDB = require("./config/db");
+
 const Product = require("./models/Product");
 
 const products = [
@@ -88,10 +91,80 @@ const products = [
     imageUrl: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=300",
     discount: 8,
   },
+  {
+    productId: "P009",
+    productName: "Smartwatch Pro",
+    productPrice: 7999,
+    category: "Electronics",
+    quantity: 20,
+    description: "Feature-rich smartwatch with heart-rate monitor and GPS.",
+    imageUrl: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?w=300",
+    discount: 12,
+  },
+  {
+    productId: "P010",
+    productName: "Leather Wallet",
+    productPrice: 1199,
+    category: "Accessories",
+    quantity: 70,
+    description: "Genuine leather wallet with RFID protection.",
+    imageUrl: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=300",
+    discount: 5,
+  },
+  {
+    productId: "P011",
+    productName: "Bluetooth Speaker",
+    productPrice: 2499,
+    category: "Electronics",
+    quantity: 35,
+    description: "Portable speaker with 12h battery and deep bass.",
+    imageUrl: "https://images.unsplash.com/photo-1585386959984-a4155222412f?w=300",
+    discount: 15,
+  },
+  {
+    productId: "P012",
+    productName: "Running Shorts",
+    productPrice: 899,
+    category: "Clothing",
+    quantity: 80,
+    description: "Moisture-wicking shorts for comfortable runs.",
+    imageUrl: "https://images.unsplash.com/photo-1586172218058-443b44aaec1f?w=300",
+    discount: 0,
+  },
+  {
+    productId: "P013",
+    productName: "Stainless Steel Cookware Set",
+    productPrice: 4999,
+    category: "Kitchen",
+    quantity: 25,
+    description: "10-piece durable cookware set, oven safe.",
+    imageUrl: "https://images.unsplash.com/photo-1605478431277-5f9b962b2c69?w=300",
+    discount: 20,
+  },
+  {
+    productId: "P014",
+    productName: "Gaming Mouse",
+    productPrice: 1999,
+    category: "Electronics",
+    quantity: 40,
+    description: "Ergonomic mouse with programmable DPI.",
+    imageUrl: "https://images.unsplash.com/photo-1517260736850-5b0c27b9e5e3?w=300",
+    discount: 10,
+  },
+  {
+    productId: "P015",
+    productName: "Travel Backpack",
+    productPrice: 3499,
+    category: "Accessories",
+    quantity: 30,
+    description: "Water-resistant backpack with multiple compartments.",
+    imageUrl: "https://images.unsplash.com/photo-1468454883922-91b907ef81d2?w=300",
+    discount: 8,
+  },
 ];
 
 async function seed() {
-  await mongoose.connect(process.env.MONGO_URI);
+  await connectDB();
   await Product.deleteMany({});
   await Product.insertMany(products);
   console.log("✅ Database seeded with", products.length, "products!");

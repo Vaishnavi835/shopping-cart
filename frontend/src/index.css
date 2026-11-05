@@ -8,14 +8,14 @@ body {
   min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .classy-title, .modal-header-row h3, .quickview-title, .cart-header-title-row h2 {
+h1, h2, h3, h4, h5, h6, .shop-logo-text, .section-heading, .hero-title, .classy-title, .modal-header-row h3, .quickview-title, .cart-header-title-row h2 {
   font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
   letter-spacing: -0.015em;
 }
 
 
 /* ─── Myntra Official Style Navigation Bar ─── */
-.myntra-navbar {
+.shop-navbar {
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -26,7 +26,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   transition: all 0.25s ease;
 }
 
-.myntra-navbar-container {
+.shop-navbar-container {
   max-width: 1440px;
   margin: 0 auto;
   height: 100%;
@@ -38,7 +38,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Left Group */
-.myntra-nav-left {
+.shop-nav-left {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -46,7 +46,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Always-Visible ☰ Menu Button */
-.myntra-menu-btn {
+.shop-menu-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -62,7 +62,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   letter-spacing: 0.02em;
 }
 
-.myntra-menu-btn:hover {
+.shop-menu-btn:hover {
   background: #ffffff;
   border-color: #c94b72;
   color: #c94b72;
@@ -70,17 +70,17 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   transform: translateY(-1px);
 }
 
-.myntra-menu-btn:active {
+.shop-menu-btn:active {
   transform: translateY(0);
 }
 
-.myntra-menu-label {
+.shop-menu-label {
   display: inline-block;
   font-size: 13px;
   font-weight: 700;
 }
 
-.myntra-logo-link {
+.shop-logo-link {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -95,11 +95,11 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   filter: drop-shadow(0 3px 8px rgba(201, 75, 114, 0.3));
 }
 
-.myntra-logo-link:hover .brand-logo-emblem {
+.shop-logo-link:hover .brand-logo-emblem {
   transform: scale(1.08) rotate(-3deg);
 }
 
-.myntra-logo-text {
+.shop-logo-text {
   font-family: 'Outfit', sans-serif;
   font-size: 1.55rem;
   font-weight: 900;
@@ -107,14 +107,14 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   color: #1e293b;
 }
 
-.myntra-logo-text .logo-accent {
+.shop-logo-text .logo-accent {
   background: linear-gradient(135deg, #c94b72, #d4a373);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 /* Center Category Menu Links (Myntra Exact Layout) */
-.myntra-category-nav {
+.shop-category-nav {
   display: flex;
   align-items: center;
   height: 100%;
@@ -122,7 +122,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   flex-shrink: 0;
 }
 
-.myntra-cat-link {
+.shop-cat-link {
   position: relative;
   height: 100%;
   display: flex;
@@ -135,8 +135,8 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   transition: color 0.2s ease;
 }
 
-.myntra-cat-link:hover,
-.myntra-cat-link.active {
+.shop-cat-link:hover,
+.shop-cat-link.active {
   color: #c94b72;
 }
 
@@ -151,7 +151,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Global Search Bar (Myntra Format) */
-.myntra-header-search {
+.shop-header-search {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -164,13 +164,13 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   transition: all 0.2s ease;
 }
 
-.myntra-header-search:focus-within {
+.shop-header-search:focus-within {
   background: #ffffff;
   border-color: #c94b72;
   box-shadow: 0 0 0 3px rgba(201, 75, 114, 0.1);
 }
 
-.myntra-header-search input {
+.shop-header-search input {
   border: none;
   background: transparent;
   outline: none;
@@ -179,7 +179,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   width: 100%;
 }
 
-.myntra-header-search input::placeholder {
+.shop-header-search input::placeholder {
   color: #696e79;
 }
 
@@ -203,19 +203,19 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Right Action Items Trio: Profile, Wishlist, Bag */
-.myntra-header-actions {
+.shop-header-actions {
   display: flex;
   align-items: center;
   gap: 1.6rem;
   flex-shrink: 0;
 }
 
-.myntra-action-item {
+.shop-action-item {
   text-decoration: none;
   cursor: pointer;
 }
 
-.myntra-action-btn {
+.shop-action-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -229,15 +229,15 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   transition: color 0.2s ease;
 }
 
-.myntra-action-btn:hover {
+.shop-action-btn:hover {
   color: #c94b72;
 }
 
-.myntra-action-btn svg {
+.shop-action-btn svg {
   stroke: currentColor;
 }
 
-.myntra-action-btn .action-label {
+.shop-action-btn .action-label {
   font-size: 11px;
   font-weight: 700;
   color: inherit;
@@ -248,7 +248,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   position: relative;
 }
 
-.myntra-bag-badge {
+.shop-bag-badge {
   position: absolute;
   top: -3px;
   right: 2px;
@@ -269,7 +269,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   align-items: center;
 }
 
-.myntra-profile-flyout {
+.shop-profile-flyout {
   position: absolute;
   top: 76px;
   right: -20px;
@@ -356,7 +356,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Myntra Mobile / Hamburger Drawer */
-.myntra-drawer-backdrop {
+.shop-drawer-backdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -369,12 +369,12 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   transition: opacity 0.3s ease;
 }
 
-.myntra-drawer-backdrop.active {
+.shop-drawer-backdrop.active {
   opacity: 1;
   pointer-events: auto;
 }
 
-.myntra-side-drawer {
+.shop-side-drawer {
   position: fixed;
   top: 0;
   left: 0;
@@ -391,11 +391,11 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   overflow: hidden;
 }
 
-.myntra-side-drawer.active {
+.shop-side-drawer.active {
   transform: translateX(0);
 }
 
-.myntra-drawer-banner {
+.shop-drawer-banner {
   background: #282c3f;
   color: #ffffff;
   padding: 1.5rem 1.25rem;
@@ -446,7 +446,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   padding: 4px;
 }
 
-.myntra-drawer-content {
+.shop-drawer-content {
   flex: 1;
   overflow-y: auto;
   padding: 1.25rem 1rem;
@@ -513,16 +513,16 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 @media (max-width: 990px) {
-  .myntra-category-nav {
+  .shop-category-nav {
     display: none;
   }
-  .myntra-header-search {
+  .shop-header-search {
     max-width: 280px;
   }
 }
 
 @media (max-width: 640px) {
-  .myntra-header-search {
+  .shop-header-search {
     display: none;
   }
 }
@@ -1094,7 +1094,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
 
 /* ─── Myntra-Style Product Catalog ─── */
-.myntra-products-page {
+.shop-products-page {
   max-width: 1400px;
   margin: 0 auto;
   padding: 1.5rem 2rem 4rem 2rem;
@@ -1103,7 +1103,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Breadcrumb Header */
-.myntra-breadcrumb-row {
+.shop-breadcrumb-row {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1134,7 +1134,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Top Search & Filter Bar */
-.myntra-topbar {
+.shop-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1145,7 +1145,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   flex-wrap: wrap;
 }
 
-.myntra-search-box {
+.shop-search-box {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1158,17 +1158,17 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   transition: all 0.2s ease;
 }
 
-.myntra-search-box:focus-within {
+.shop-search-box:focus-within {
   background: #ffffff;
   border-color: #c94b72;
   box-shadow: 0 0 0 3px rgba(201, 75, 114, 0.12);
 }
 
-.myntra-search-box .search-icon {
+.shop-search-box .search-icon {
   color: #696e79;
 }
 
-.myntra-search-box input {
+.shop-search-box input {
   background: transparent;
   border: none;
   outline: none;
@@ -1186,7 +1186,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   padding: 2px 4px;
 }
 
-.myntra-sort-box {
+.shop-sort-box {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1202,7 +1202,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   font-weight: 400;
 }
 
-.myntra-sort-box select {
+.shop-sort-box select {
   border: none;
   outline: none;
   font-size: 13px;
@@ -1213,14 +1213,14 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Main Split Layout: Sidebar + Grid */
-.myntra-main-container {
+.shop-main-container {
   display: flex;
   gap: 2rem;
   align-items: flex-start;
 }
 
 /* Left Filter Sidebar */
-.myntra-filter-sidebar {
+.shop-filter-sidebar {
   width: 250px;
   flex-shrink: 0;
   border-right: 1px solid #e9e9eb;
@@ -1278,7 +1278,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   gap: 9px;
 }
 
-.myntra-radio-option {
+.shop-radio-option {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1287,7 +1287,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   cursor: pointer;
 }
 
-.myntra-radio-option input[type="radio"] {
+.shop-radio-option input[type="radio"] {
   accent-color: #c94b72;
   cursor: pointer;
   width: 16px;
@@ -1353,19 +1353,19 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Right Products Grid */
-.myntra-product-main {
+.shop-product-main {
   flex: 1;
   min-width: 0;
 }
 
-.myntra-grid {
+.shop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 24px 20px;
 }
 
 /* Myntra Product Card */
-.myntra-card {
+.shop-card {
   background: #ffffff;
   border-radius: 6px;
   overflow: hidden;
@@ -1376,14 +1376,14 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   flex-direction: column;
 }
 
-.myntra-card:hover {
+.shop-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 25px rgba(40, 44, 63, 0.12);
   border-color: #f5f5f6;
 }
 
 /* Product Image Container */
-.myntra-image-wrapper {
+.shop-image-wrapper {
   position: relative;
   width: 100%;
   aspect-ratio: 3 / 4;
@@ -1391,7 +1391,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   overflow: hidden;
 }
 
-.myntra-product-img {
+.shop-product-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1399,11 +1399,11 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   display: block;
 }
 
-.myntra-card:hover .myntra-product-img {
+.shop-card:hover .shop-product-img {
   transform: scale(1.04);
 }
 
-.myntra-img-placeholder {
+.shop-img-placeholder {
   width: 100%;
   height: 100%;
   display: flex;
@@ -1414,7 +1414,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Wishlist Button on Image */
-.myntra-wishlist-icon {
+.shop-wishlist-icon {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -1432,13 +1432,13 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   z-index: 5;
 }
 
-.myntra-wishlist-icon:hover {
+.shop-wishlist-icon:hover {
   transform: scale(1.1);
   background: #ffffff;
 }
 
 /* Rating Pill on Bottom-Left of Image */
-.myntra-rating-pill {
+.shop-rating-pill {
   position: absolute;
   bottom: 10px;
   left: 10px;
@@ -1472,7 +1472,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Discount Ribbon */
-.myntra-discount-ribbon {
+.shop-discount-ribbon {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -1486,14 +1486,14 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Card Body Details */
-.myntra-card-details {
+.shop-card-details {
   padding: 12px 14px 16px 14px;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-.myntra-brand-name {
+.shop-brand-name {
   font-size: 13.5px;
   font-weight: 700;
   color: #282c3f;
@@ -1502,7 +1502,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   letter-spacing: 0.02em;
 }
 
-.myntra-product-title {
+.shop-product-title {
   font-size: 13px;
   font-weight: 400;
   color: #535766;
@@ -1512,7 +1512,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   margin-bottom: 4px;
 }
 
-.myntra-product-desc {
+.shop-product-desc {
   font-size: 12px;
   color: #94969f;
   white-space: nowrap;
@@ -1521,7 +1521,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   margin-bottom: 8px;
 }
 
-.myntra-price-row {
+.shop-price-row {
   display: flex;
   align-items: baseline;
   gap: 7px;
@@ -1562,14 +1562,14 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 /* Actions in Card */
-.myntra-card-actions {
+.shop-card-actions {
   display: flex;
   gap: 8px;
   margin-top: auto;
   padding-top: 6px;
 }
 
-.myntra-bag-btn {
+.shop-bag-btn {
   flex: 1;
   display: inline-flex;
   align-items: center;
@@ -1587,17 +1587,17 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   transition: all 0.2s ease;
 }
 
-.myntra-bag-btn:hover:not(:disabled) {
+.shop-bag-btn:hover:not(:disabled) {
   background: #a83256;
   transform: translateY(-1px);
 }
 
-.myntra-bag-btn:disabled {
+.shop-bag-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.myntra-rate-btn {
+.shop-rate-btn {
   padding: 9px 12px;
   background: #ffffff;
   border: 1px solid #d4d5d9;
@@ -1609,13 +1609,13 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   transition: all 0.2s ease;
 }
 
-.myntra-rate-btn:hover {
+.shop-rate-btn:hover {
   border-color: #282c3f;
   background: #f5f5f6;
 }
 
 /* Empty & Loading States */
-.myntra-loader {
+.shop-loader {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1626,7 +1626,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   font-weight: 600;
 }
 
-.myntra-spinner {
+.shop-spinner {
   width: 44px;
   height: 44px;
   border: 3.5px solid #f3f3f3;
@@ -1635,7 +1635,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   animation: spin 0.8s linear infinite;
 }
 
-.myntra-empty-state {
+.shop-empty-state {
   text-align: center;
   padding: 5rem 2rem;
   background: #fdfdfd;
@@ -1648,19 +1648,19 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   margin-bottom: 1rem;
 }
 
-.myntra-empty-state h3 {
+.shop-empty-state h3 {
   font-size: 1.3rem;
   color: #282c3f;
   margin-bottom: 0.5rem;
 }
 
-.myntra-empty-state p {
+.shop-empty-state p {
   color: #7e818c;
   font-size: 0.95rem;
   margin-bottom: 1.5rem;
 }
 
-.myntra-btn-primary {
+.shop-btn-primary {
   padding: 10px 24px;
   background: #c94b72;
   color: #ffffff;
@@ -1672,11 +1672,11 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   transition: background 0.2s;
 }
 
-.myntra-btn-primary:hover {
+.shop-btn-primary:hover {
   background: #a83256;
 }
 
-.myntra-btn-outline {
+.shop-btn-outline {
   padding: 10px 20px;
   background: transparent;
   border: 1px solid #d4d5d9;
@@ -1688,12 +1688,12 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   transition: all 0.2s;
 }
 
-.myntra-btn-outline:hover {
+.shop-btn-outline:hover {
   background: #f5f5f6;
 }
 
 /* Review Modal (Myntra Styled) */
-.myntra-modal-overlay {
+.shop-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -1708,7 +1708,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   padding: 1.5rem;
 }
 
-.myntra-review-modal {
+.shop-review-modal {
   background: #ffffff;
   border-radius: 12px;
   padding: 2rem;
@@ -1803,7 +1803,7 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   justify-content: flex-end;
 }
 
-.myntra-alert-error {
+.shop-alert-error {
   background: #fff1f2;
   border: 1px solid #fecdd3;
   color: #e11d48;
@@ -1814,10 +1814,10 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
 }
 
 @media (max-width: 900px) {
-  .myntra-main-container {
+  .shop-main-container {
     flex-direction: column;
   }
-  .myntra-filter-sidebar {
+  .shop-filter-sidebar {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid #e9e9eb;
@@ -1935,39 +1935,39 @@ h1, h2, h3, h4, h5, h6, .myntra-logo-text, .section-heading, .hero-title, .class
   color: #f1f5f9 !important;
 }
 
-body.dark-theme .myntra-navbar {
+body.dark-theme .shop-navbar {
   background: rgba(22, 25, 34, 0.96) !important;
   border-bottom: 1px solid #2b3142 !important;
 }
 
-body.dark-theme .myntra-logo-text {
+body.dark-theme .shop-logo-text {
   color: #f1f5f9 !important;
 }
 
-body.dark-theme .myntra-cat-link span {
+body.dark-theme .shop-cat-link span {
   color: #cbd5e1 !important;
 }
 
-body.dark-theme .myntra-cat-link.active span,
-body.dark-theme .myntra-cat-link:hover span {
+body.dark-theme .shop-cat-link.active span,
+body.dark-theme .shop-cat-link:hover span {
   color: #c94b72 !important;
 }
 
-body.dark-theme .myntra-header-search {
+body.dark-theme .shop-header-search {
   background: #1c202d !important;
   border-color: #2b3142 !important;
 }
 
-body.dark-theme .myntra-header-search input {
+body.dark-theme .shop-header-search input {
   color: #f1f5f9 !important;
 }
 
-body.dark-theme .myntra-action-btn {
+body.dark-theme .shop-action-btn {
   color: #cbd5e1 !important;
 }
 
-body.dark-theme .myntra-profile-flyout,
-body.dark-theme .myntra-side-drawer {
+body.dark-theme .shop-profile-flyout,
+body.dark-theme .shop-side-drawer {
   background: #1c202d !important;
   border-color: #2b3142 !important;
   color: #f1f5f9 !important;
@@ -1984,7 +1984,7 @@ body.dark-theme .drawer-cat-item:hover {
   background: #232838 !important;
 }
 
-body.dark-theme .myntra-card,
+body.dark-theme .shop-card,
 body.dark-theme .dashboard-section-card,
 body.dark-theme .dashboard-hero-card,
 body.dark-theme .cart-item-card,
@@ -1993,13 +1993,13 @@ body.dark-theme .order-card,
 body.dark-theme .profile-card,
 body.dark-theme .quickview-modal-content,
 body.dark-theme .compare-modal-content,
-body.dark-theme .myntra-review-modal {
+body.dark-theme .shop-review-modal {
   background: #1c202d !important;
   border: 1px solid #2b3142 !important;
   color: #f1f5f9 !important;
 }
 
-body.dark-theme .myntra-product-title,
+body.dark-theme .shop-product-title,
 body.dark-theme .quickview-title,
 body.dark-theme .section-heading,
 body.dark-theme .hero-title,
@@ -2007,7 +2007,7 @@ body.dark-theme .cart-item-info h4 {
   color: #f1f5f9 !important;
 }
 
-body.dark-theme .myntra-filter-sidebar {
+body.dark-theme .shop-filter-sidebar {
   border-right-color: #2b3142 !important;
 }
 
@@ -2017,7 +2017,7 @@ body.dark-theme .sort-label {
   color: #cbd5e1 !important;
 }
 
-body.dark-theme .myntra-sort-box select,
+body.dark-theme .shop-sort-box select,
 body.dark-theme .price-inputs-row input,
 body.dark-theme .price-chip {
   background: #161922 !important;
@@ -2036,12 +2036,12 @@ body.dark-theme .hero-stat-box {
   border-color: #2b3142 !important;
 }
 
-body.dark-theme .myntra-btn-outline {
+body.dark-theme .shop-btn-outline {
   border-color: #3b4359 !important;
   color: #f1f5f9 !important;
 }
 
-body.dark-theme .myntra-btn-outline:hover {
+body.dark-theme .shop-btn-outline:hover {
   background: #2b3142 !important;
 }
 
@@ -2146,12 +2146,12 @@ body.dark-theme .best-value-filter-chip {
   white-space: nowrap;
 }
 
-.myntra-card:hover .card-quickview-btn {
+.shop-card:hover .card-quickview-btn {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
 }
 
-.myntra-compare-icon {
+.shop-compare-icon {
   position: absolute;
   top: 42px;
   right: 10px;
@@ -2169,11 +2169,11 @@ body.dark-theme .best-value-filter-chip {
   font-size: 13px;
 }
 
-.myntra-compare-icon:hover {
+.shop-compare-icon:hover {
   transform: scale(1.1);
 }
 
-.myntra-compare-icon.compared {
+.shop-compare-icon.compared {
   background: #c94b72;
   border-color: #c94b72;
   filter: brightness(1.1);

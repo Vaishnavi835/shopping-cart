@@ -130,8 +130,8 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="myntra-loader" style={{ minHeight: '60vh' }}>
-        <div className="myntra-spinner"></div>
+      <div className="shop-loader" style={{ minHeight: '60vh' }}>
+        <div className="shop-spinner"></div>
         <span>Preparing your personalized shopping dashboard...</span>
       </div>
     );
@@ -191,7 +191,7 @@ export default function Dashboard() {
           {!isEditingBudget ? (
             <button
               type="button"
-              className="myntra-btn-outline"
+              className="shop-btn-outline"
               onClick={() => setIsEditingBudget(true)}
             >
               ✏️ {budget > 0 ? 'Adjust Budget' : 'Set Budget'}
@@ -206,12 +206,12 @@ export default function Dashboard() {
                 onChange={(e) => setBudgetInput(e.target.value)}
                 min="0"
               />
-              <button type="button" className="myntra-btn-primary" onClick={handleSaveBudget}>
+              <button type="button" className="shop-btn-primary" onClick={handleSaveBudget}>
                 Save
               </button>
               <button
                 type="button"
-                className="myntra-btn-outline"
+                className="shop-btn-outline"
                 onClick={() => setIsEditingBudget(false)}
               >
                 Cancel
@@ -456,7 +456,7 @@ export default function Dashboard() {
                     {p.quantity > 0 && (
                       <button
                         type="button"
-                        className="myntra-btn-primary"
+                        className="shop-btn-primary"
                         style={{ padding: '6px 10px', fontSize: '0.8rem' }}
                         onClick={() => handleAddToCart(p._id)}
                       >

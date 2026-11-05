@@ -77,14 +77,14 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="myntra-navbar">
-        <div className="myntra-navbar-container">
+      <header className="shop-navbar">
+        <div className="shop-navbar-container">
           {/* Left: ☰ Menu Button + Logo */}
-          <div className="myntra-nav-left">
+          <div className="shop-nav-left">
             {user && (
               <button
                 type="button"
-                className="myntra-menu-btn"
+                className="shop-menu-btn"
                 onClick={() => setSideDrawerOpen(true)}
                 title="Open Navigation Menu"
               >
@@ -93,30 +93,15 @@ export default function Navbar() {
                   <line x1="3" y1="12" x2="21" y2="12" />
                   <line x1="3" y1="18" x2="21" y2="18" />
                 </svg>
-                <span className="myntra-menu-label">Menu</span>
+                <span className="shop-menu-label">Menu</span>
               </button>
             )}
 
-            <Link to="/products" className="myntra-logo-link" title="NOVA Home">
+            <Link to="/products" className="shop-logo-link" title="NOVA Home">
               <div className="brand-logo-emblem">
-                <svg width="34" height="34" viewBox="0 0 36 36" fill="none">
-                  <defs>
-                    <linearGradient id="nova-grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                      <stop stopColor="#c94b72" />
-                      <stop offset="0.6" stopColor="#b73e65" />
-                      <stop offset="1" stopColor="#d4a373" />
-                    </linearGradient>
-                    <linearGradient id="champagne-star" x1="0" y1="0" x2="1" y2="1">
-                      <stop stopColor="#fff3e0" />
-                      <stop offset="1" stopColor="#d4a373" />
-                    </linearGradient>
-                  </defs>
-                  <rect width="36" height="36" rx="10" fill="url(#nova-grad)" />
-                  <path d="M11 25V11L25 25V11" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M25 6.5L25.8 8.5L28 9.3L25.8 10.1L25 12.1L24.2 10.1L22 9.3L24.2 8.5Z" fill="url(#champagne-star)" />
-                </svg>
+                  <img src="/logo.png" alt="NOVA logo" width="34" height="34" style={{ filter: 'drop-shadow(0 2px 4px rgba(201,75,114,.3))' }} />
               </div>
-              <span className="myntra-logo-text">
+              <span className="shop-logo-text">
                 NO<span className="logo-accent">VA</span>
               </span>
             </Link>
@@ -124,11 +109,11 @@ export default function Navbar() {
 
           {/* Desktop Category Navigation */}
           {user && (
-            <nav className="myntra-category-nav">
+            <nav className="shop-category-nav">
               {/* Dashboard Tab */}
               <Link
                 to="/dashboard"
-                className={`myntra-cat-link ${isDashboardActive ? 'active' : ''}`}
+                className={`shop-cat-link ${isDashboardActive ? 'active' : ''}`}
                 title="Personalized Shopping Dashboard"
               >
                 <span>DASHBOARD</span>
@@ -141,7 +126,7 @@ export default function Navbar() {
                   <Link
                     key={cat}
                     to={`/products?category=${encodeURIComponent(cat)}`}
-                    className={`myntra-cat-link ${isActive ? 'active' : ''}`}
+                    className={`shop-cat-link ${isActive ? 'active' : ''}`}
                   >
                     <span>{cat.toUpperCase()}</span>
                     {isActive && <div className="active-nav-indicator" />}
@@ -151,7 +136,7 @@ export default function Navbar() {
 
               <Link
                 to="/products"
-                className={`myntra-cat-link ${isAllProductsActive ? 'active' : ''}`}
+                className={`shop-cat-link ${isAllProductsActive ? 'active' : ''}`}
               >
                 <span>ALL PRODUCTS</span>
                 {isAllProductsActive && <div className="active-nav-indicator" />}
@@ -161,7 +146,7 @@ export default function Navbar() {
 
           {/* Global Search Bar */}
           {user && (
-            <form onSubmit={handleSearchSubmit} className="myntra-header-search">
+            <form onSubmit={handleSearchSubmit} className="shop-header-search">
               <button type="submit" className="search-submit-icon" aria-label="Search">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <circle cx="11" cy="11" r="8" />
@@ -188,7 +173,7 @@ export default function Navbar() {
 
           {/* Right Action Bar (Dark Mode Toggle, Profile, Wishlist, Bag) */}
           {user ? (
-            <div className="myntra-header-actions">
+            <div className="shop-header-actions">
               {/* 🌙 Dark Mode Toggle Button */}
               <button
                 type="button"
@@ -202,14 +187,14 @@ export default function Navbar() {
 
               {/* 1. Profile Dropdown Trigger */}
               <div
-                className="myntra-action-item profile-dropdown-wrapper"
+                className="shop-action-item profile-dropdown-wrapper"
                 ref={dropdownRef}
                 onMouseEnter={() => setProfileDropdownOpen(true)}
                 onMouseLeave={() => setProfileDropdownOpen(false)}
               >
                 <button
                   type="button"
-                  className="myntra-action-btn"
+                  className="shop-action-btn"
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -221,7 +206,7 @@ export default function Navbar() {
 
                 {/* Myntra-style Profile Flyout Menu */}
                 {profileDropdownOpen && (
-                  <div className="myntra-profile-flyout">
+                  <div className="shop-profile-flyout">
                     <div className="profile-flyout-header">
                       <div className="flyout-welcome">Welcome, {user.username}</div>
                       <div className="flyout-email">{user.emailId}</div>
@@ -270,8 +255,8 @@ export default function Navbar() {
               </div>
 
               {/* 2. Wishlist Button */}
-              <Link to="/wishlist" className="myntra-action-item">
-                <div className="myntra-action-btn">
+              <Link to="/wishlist" className="shop-action-item">
+                <div className="shop-action-btn">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                   </svg>
@@ -280,8 +265,8 @@ export default function Navbar() {
               </Link>
 
               {/* 3. Bag Button */}
-              <Link to="/cart" className="myntra-action-item">
-                <div className="myntra-action-btn bag-btn">
+              <Link to="/cart" className="shop-action-item">
+                <div className="shop-action-btn bag-btn">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                     <line x1="3" y1="6" x2="21" y2="6" />
@@ -289,15 +274,15 @@ export default function Navbar() {
                   </svg>
                   <span className="action-label">Bag</span>
                   {cartCount > 0 && (
-                    <span className="myntra-bag-badge">{cartCount}</span>
+                    <span className="shop-bag-badge">{cartCount}</span>
                   )}
                 </div>
               </Link>
             </div>
           ) : (
-            <div className="myntra-auth-btns">
-              <Link to="/login" className="myntra-login-link">Log In</Link>
-              <Link to="/register" className="myntra-signup-btn">Sign Up</Link>
+            <div className="shop-auth-btns">
+              <Link to="/login" className="shop-login-link">Log In</Link>
+              <Link to="/register" className="shop-signup-btn">Sign Up</Link>
             </div>
           )}
         </div>
@@ -307,13 +292,13 @@ export default function Navbar() {
       {user && (
         <>
           <div
-            className={`myntra-drawer-backdrop ${sideDrawerOpen ? 'active' : ''}`}
+            className={`shop-drawer-backdrop ${sideDrawerOpen ? 'active' : ''}`}
             onClick={() => setSideDrawerOpen(false)}
           />
 
-          <aside className={`myntra-side-drawer ${sideDrawerOpen ? 'active' : ''}`}>
+          <aside className={`shop-side-drawer ${sideDrawerOpen ? 'active' : ''}`}>
             {/* Top User Greeting Banner */}
-            <div className="myntra-drawer-banner">
+            <div className="shop-drawer-banner">
               <div className="banner-user-row">
                 <div className="banner-avatar">
                   {user.username ? user.username.charAt(0).toUpperCase() : 'U'}
@@ -334,7 +319,7 @@ export default function Navbar() {
             </div>
 
             {/* Drawer Navigation Body */}
-            <div className="myntra-drawer-content">
+            <div className="shop-drawer-content">
               {/* Smart Features Section */}
               <div className="drawer-cat-section">
                 <div className="drawer-heading">SMART FEATURES</div>

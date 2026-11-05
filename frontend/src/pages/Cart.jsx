@@ -157,8 +157,8 @@ export default function Cart() {
 
   if (loading) {
     return (
-      <div className="myntra-loader" style={{ minHeight: '60vh' }}>
-        <div className="myntra-spinner"></div>
+      <div className="shop-loader" style={{ minHeight: '60vh' }}>
+        <div className="shop-spinner"></div>
         <span>Loading your shopping bag...</span>
       </div>
     );
@@ -178,7 +178,7 @@ export default function Cart() {
           <div className="icon">🛍️</div>
           <h3>Your shopping bag is empty</h3>
           <p>Explore our latest catalogue and discover amazing styles!</p>
-          <Link to="/products" className="myntra-btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>
+          <Link to="/products" className="shop-btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>
             Start Shopping
           </Link>
         </div>
@@ -386,7 +386,7 @@ export default function Cart() {
 
                 <button
                   type="button"
-                  className="myntra-btn-primary place-order-btn"
+                  className="shop-btn-primary place-order-btn"
                   onClick={checkout}
                   disabled={checkingOut || hasInvalidStock}
                 >

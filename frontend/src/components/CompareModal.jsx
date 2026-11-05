@@ -7,7 +7,7 @@ export default function CompareModal({ isOpen, onClose, onAddToCart }) {
   if (!isOpen) return null;
 
   return (
-    <div className="myntra-modal-overlay" onClick={onClose}>
+    <div className="shop-modal-overlay" onClick={onClose}>
       <div className="compare-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header-row">
           <div>
@@ -21,7 +21,7 @@ export default function CompareModal({ isOpen, onClose, onAddToCart }) {
           <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
             <button
               type="button"
-              className="myntra-btn-outline"
+              className="shop-btn-outline"
               style={{ padding: '6px 14px', fontSize: '0.85rem' }}
               onClick={clearCompare}
             >
@@ -153,7 +153,7 @@ export default function CompareModal({ isOpen, onClose, onAddToCart }) {
                     <td key={p._id}>
                       <button
                         type="button"
-                        className="myntra-bag-btn"
+                        className="shop-bag-btn"
                         style={{ width: '100%', justifyContent: 'center' }}
                         disabled={p.quantity === 0}
                         onClick={() => {
@@ -206,10 +206,10 @@ export function CompareTray({ onOpenModal }) {
         </div>
       </div>
       <div className="compare-tray-right">
-        <button type="button" className="myntra-btn-outline tray-btn" onClick={clearCompare}>
+        <button type="button" className="shop-btn-outline tray-btn" onClick={clearCompare}>
           Clear
         </button>
-        <button type="button" className="myntra-btn-primary tray-btn" onClick={onOpenModal}>
+        <button type="button" className="shop-btn-primary tray-btn" onClick={onOpenModal}>
           Compare Now ({compareItems.length})
         </button>
       </div>

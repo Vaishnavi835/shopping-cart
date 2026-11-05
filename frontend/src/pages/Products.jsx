@@ -8,11 +8,11 @@ import QuickViewModal from '../components/QuickViewModal';
 // Star rating display component
 function Stars({ rating }) {
   return (
-    <span className="myntra-stars-inline">
+    <span className="shop-stars-inline">
       {[1, 2, 3, 4, 5].map((s) => (
         <span key={s} style={{ color: s <= Math.round(rating) ? '#14958f' : '#e2e8f0' }}>★</span>
       ))}
-      <span className="myntra-rating-count">({rating})</span>
+      <span className="shop-rating-count">({rating})</span>
     </span>
   );
 }
@@ -55,8 +55,8 @@ function ReviewModal({ product, token, onClose, onSubmitted }) {
   };
 
   return (
-    <div className="myntra-modal-overlay" onClick={onClose}>
-      <div className="myntra-review-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="shop-modal-overlay" onClick={onClose}>
+      <div className="shop-review-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header-row">
           <div>
             <h3>Customer Review</h3>
@@ -65,7 +65,7 @@ function ReviewModal({ product, token, onClose, onSubmitted }) {
           <button type="button" className="modal-close-icon" onClick={onClose}>✕</button>
         </div>
 
-        {error && <div className="myntra-alert-error">{error}</div>}
+        {error && <div className="shop-alert-error">{error}</div>}
 
         <div className="rating-select-group">
           <label>Your Rating</label>
@@ -100,7 +100,7 @@ function ReviewModal({ product, token, onClose, onSubmitted }) {
         <div className="modal-actions-row">
           <button
             type="button"
-            className="myntra-btn-primary"
+            className="shop-btn-primary"
             onClick={handleSubmit}
             disabled={loading}
           >
@@ -108,7 +108,7 @@ function ReviewModal({ product, token, onClose, onSubmitted }) {
           </button>
           <button
             type="button"
-            className="myntra-btn-outline"
+            className="shop-btn-outline"
             onClick={onClose}
           >
             Cancel
@@ -362,9 +362,9 @@ export default function Products() {
   };
 
   return (
-    <div className="myntra-products-page">
+    <div className="shop-products-page">
       {/* Breadcrumb Header Row */}
-      <div className="myntra-breadcrumb-row">
+      <div className="shop-breadcrumb-row">
         <span className="breadcrumb-link">Home</span>
         <span className="breadcrumb-separator">/</span>
         <span className="breadcrumb-link">Products</span>
@@ -380,8 +380,8 @@ export default function Products() {
       </div>
 
       {/* Top Search & Filter Bar */}
-      <div className="myntra-topbar">
-        <div className="myntra-search-box">
+      <div className="shop-topbar">
+        <div className="shop-search-box">
           <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -410,7 +410,7 @@ export default function Products() {
         </button>
 
         {/* Myntra Styled Sort Dropdown */}
-        <div className="myntra-sort-box">
+        <div className="shop-sort-box">
           <label className="sort-label">Sort by :</label>
           <select value={sort} onChange={(e) => setSort(e.target.value)}>
             <option value="">Recommended</option>
@@ -422,9 +422,9 @@ export default function Products() {
       </div>
 
       {/* Main Split Layout: Sidebar Filters + Products Grid */}
-      <div className="myntra-main-container">
+      <div className="shop-main-container">
         {/* Left Filter Sidebar */}
-        <aside className="myntra-filter-sidebar">
+        <aside className="shop-filter-sidebar">
           <div className="filter-header-bar">
             <span className="filter-title">FILTERS</span>
             {(category !== 'All' || minPrice || maxPrice || search || minRating > 0 || minDiscount > 0 || sort || onlyBestValue) && (
@@ -437,7 +437,7 @@ export default function Products() {
           {/* Smart Filter: Best Value Deals */}
           <div className="filter-section">
             <div className="filter-section-title">SMART FILTERS</div>
-            <label className="myntra-radio-option">
+            <label className="shop-radio-option">
               <input
                 type="checkbox"
                 checked={onlyBestValue}
@@ -454,7 +454,7 @@ export default function Products() {
             <div className="filter-section-title">CATEGORIES</div>
             <div className="filter-options-list">
               {categories.map((c) => (
-                <label key={c} className="myntra-radio-option">
+                <label key={c} className="shop-radio-option">
                   <input
                     type="radio"
                     name="category-choice"
@@ -522,7 +522,7 @@ export default function Products() {
                 { val: 3, label: '3★ & above' },
                 { val: 0, label: 'All Ratings' },
               ].map((r) => (
-                <label key={r.val} className="myntra-radio-option">
+                <label key={r.val} className="shop-radio-option">
                   <input
                     type="radio"
                     name="rating-choice"
@@ -544,7 +544,7 @@ export default function Products() {
                 { val: 20, label: '20% and above' },
                 { val: 0, label: 'All Discounts' },
               ].map((d) => (
-                <label key={d.val} className="myntra-radio-option">
+                <label key={d.val} className="shop-radio-option">
                   <input
                     type="radio"
                     name="discount-choice"
@@ -559,32 +559,32 @@ export default function Products() {
         </aside>
 
         {/* Right Product Grid Column */}
-        <main className="myntra-product-main">
+        <main className="shop-product-main">
           {loading ? (
-            <div className="myntra-loader">
-              <div className="myntra-spinner"></div>
+            <div className="shop-loader">
+              <div className="shop-spinner"></div>
               <span>Loading catalogue...</span>
             </div>
           ) : fetchError ? (
-            <div className="myntra-empty-state">
+            <div className="shop-empty-state">
               <div className="empty-icon-wrap">⚠️</div>
               <h3>Unable to load catalogue</h3>
               <p>{fetchError}</p>
-              <button type="button" className="myntra-btn-primary" onClick={fetchProducts}>
+              <button type="button" className="shop-btn-primary" onClick={fetchProducts}>
                 🔄 Try Again
               </button>
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="myntra-empty-state">
+            <div className="shop-empty-state">
               <div className="empty-icon-wrap">🛍️</div>
               <h3>We couldn't find any matches!</h3>
               <p>Please check the spelling or try resetting some of your filters</p>
-              <button type="button" className="myntra-btn-primary" onClick={handleClearAll}>
+              <button type="button" className="shop-btn-primary" onClick={handleClearAll}>
                 Clear All Filters
               </button>
             </div>
           ) : (
-            <div className="myntra-grid">
+            <div className="shop-grid">
               {filteredProducts.map((p) => {
                 const isWishlisted = wishlistIds.has(p._id);
                 const isCompared = compareItems.some((item) => item._id === p._id);
@@ -593,18 +593,18 @@ export default function Products() {
                 const finalPrice = hasDiscount ? p.discountedPrice : p.productPrice;
 
                 return (
-                  <div className="myntra-card" key={p._id}>
+                  <div className="shop-card" key={p._id}>
                     {/* Top Image Container */}
-                    <div className="myntra-image-wrapper">
+                    <div className="shop-image-wrapper">
                       {p.imageUrl ? (
                         <img
                           src={p.imageUrl}
                           alt={p.productName}
-                          className="myntra-product-img"
+                          className="shop-product-img"
                           loading="lazy"
                         />
                       ) : (
-                        <div className="myntra-img-placeholder">
+                        <div className="shop-img-placeholder">
                           <span>📦</span>
                         </div>
                       )}
@@ -629,7 +629,7 @@ export default function Products() {
                       {/* Wishlist Heart Button */}
                       <button
                         type="button"
-                        className={`myntra-wishlist-icon ${isWishlisted ? 'wishlisted' : ''}`}
+                        className={`shop-wishlist-icon ${isWishlisted ? 'wishlisted' : ''}`}
                         onClick={() => toggleWishlist(p._id)}
                         title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
                       >
@@ -641,7 +641,7 @@ export default function Products() {
                       {/* Compare Checkbox Button */}
                       <button
                         type="button"
-                        className={`myntra-compare-icon ${isCompared ? 'compared' : ''}`}
+                        className={`shop-compare-icon ${isCompared ? 'compared' : ''}`}
                         onClick={() => toggleCompare(p)}
                         title={isCompared ? 'Remove from comparison' : 'Compare product (up to 3)'}
                       >
@@ -650,7 +650,7 @@ export default function Products() {
 
                       {/* Rating Pill */}
                       {p.averageRating > 0 && (
-                        <div className="myntra-rating-pill">
+                        <div className="shop-rating-pill">
                           <span className="rating-score">{p.averageRating}</span>
                           <span className="rating-star">★</span>
                           <span className="rating-divider">|</span>
@@ -660,22 +660,22 @@ export default function Products() {
 
                       {/* Discount Badge on Image */}
                       {hasDiscount && (
-                        <div className="myntra-discount-ribbon">
+                        <div className="shop-discount-ribbon">
                           {p.discount}% OFF
                         </div>
                       )}
                     </div>
 
                     {/* Card Content Details */}
-                    <div className="myntra-card-details">
+                    <div className="shop-card-details">
                       {/* Brand / Category */}
-                      <div className="myntra-brand-name">
+                      <div className="shop-brand-name">
                         {p.category}
                       </div>
 
                       {/* Product Name Title */}
                       <h4
-                        className="myntra-product-title"
+                        className="shop-product-title"
                         title={p.productName}
                         onClick={() => setQuickViewProduct(p)}
                         style={{ cursor: 'pointer' }}
@@ -684,12 +684,12 @@ export default function Products() {
                       </h4>
 
                       {/* Description truncated */}
-                      <p className="myntra-product-desc">
+                      <p className="shop-product-desc">
                         {p.description || 'Premium lifestyle quality product'}
                       </p>
 
                       {/* Pricing Row */}
-                      <div className="myntra-price-row">
+                      <div className="shop-price-row">
                         <span className="discounted-price">
                           Rs. {finalPrice?.toLocaleString()}
                         </span>
@@ -723,10 +723,10 @@ export default function Products() {
                       ) : null}
 
                       {/* Action Buttons: Add to Bag & Review */}
-                      <div className="myntra-card-actions">
+                      <div className="shop-card-actions">
                         <button
                           type="button"
-                          className="myntra-bag-btn"
+                          className="shop-bag-btn"
                           onClick={() => addToCart(p._id)}
                           disabled={p.quantity === 0 || addingToCartId === p._id}
                         >
@@ -740,7 +740,7 @@ export default function Products() {
 
                         <button
                           type="button"
-                          className="myntra-rate-btn"
+                          className="shop-rate-btn"
                           onClick={() => setReviewProduct(p)}
                           title="Rate and write review"
                         >

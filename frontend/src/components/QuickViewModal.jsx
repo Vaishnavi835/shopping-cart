@@ -62,7 +62,7 @@ export default function QuickViewModal({
   };
 
   return (
-    <div className="myntra-modal-overlay" onClick={onClose}>
+    <div className="shop-modal-overlay" onClick={onClose}>
       <div className="quickview-modal-content" onClick={(e) => e.stopPropagation()}>
         <button type="button" className="modal-close-icon" onClick={onClose}>
           ✕
@@ -78,7 +78,7 @@ export default function QuickViewModal({
                 <div className="quickview-img-fallback">📦</div>
               )}
               {hasDiscount && (
-                <div className="myntra-discount-ribbon">{product.discount}% OFF</div>
+                <div className="shop-discount-ribbon">{product.discount}% OFF</div>
               )}
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function QuickViewModal({
 
             {/* Rating pill */}
             <div className="quickview-rating-row">
-              <span className="myntra-rating-pill">
+              <span className="shop-rating-pill">
                 <span className="rating-score">{product.averageRating || 0}</span>
                 <span className="rating-star">★</span>
                 <span className="rating-divider">|</span>
@@ -153,7 +153,7 @@ export default function QuickViewModal({
             <div className="quickview-actions">
               <button
                 type="button"
-                className="myntra-btn-primary"
+                className="shop-btn-primary"
                 style={{ flex: 1.5, padding: '14px', fontSize: '1rem' }}
                 disabled={isOutOfStock}
                 onClick={() => {
@@ -165,7 +165,7 @@ export default function QuickViewModal({
               </button>
               <button
                 type="button"
-                className={`myntra-btn-outline ${isWishlisted ? 'active-wishlist' : ''}`}
+                className={`shop-btn-outline ${isWishlisted ? 'active-wishlist' : ''}`}
                 style={{ flex: 1, padding: '14px', fontSize: '0.95rem' }}
                 onClick={() => onToggleWishlist(product._id)}
               >

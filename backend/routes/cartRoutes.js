@@ -10,6 +10,14 @@ router.get("/", protect, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate("cart.product");
     if (!user) return res.status(404).json({ message: "User not found." });
+
+    // 🛡️ Auto-clean any cart items where product was deleted/unseeded
+    const initialCount = user.cart.length;
+    user.cart = user.cart.filter((item) => item.product && item.product._id);
+    if (user.cart.length !== initialCount) {
+      await user.save();
+    }
+
     return res.status(200).json({ cart: user.cart });
   } catch (err) {
     return res.status(500).json({ message: "Server error: " + err.message });
@@ -136,7 +144,12 @@ router.post("/swap", protect, async (req, res) => {
 // ─── POST /api/cart/checkout ─── Place order (save to order history)
 router.post("/checkout", protect, async (req, res) => {
   try {
+    const { deliveryAddress, paymentMethod = "Card" } = req.body || {};
     const user = await User.findById(req.user.id).populate("cart.product");
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    // Filter to only valid products
+    user.cart = user.cart.filter((item) => item.product && item.product._id);
     if (!user.cart.length) {
       return res.status(400).json({ message: "Cart is empty." });
     }
@@ -154,21 +167,42 @@ router.post("/checkout", protect, async (req, res) => {
       product.quantity -= item.quantity;
       await product.save();
 
-      const discountedPrice = product.productPrice * (1 - product.discount / 100);
+      const discountedPrice = product.productPrice * (1 - (product.discount || 0) / 100);
       totalAmount += discountedPrice * item.quantity;
       orderItems.push({
         productName: product.productName,
         price: parseFloat(discountedPrice.toFixed(2)),
         quantity: item.quantity,
+        imageUrl: product.imageUrl || "",
       });
     }
 
-    user.orderHistory.push({ items: orderItems, totalAmount: parseFloat(totalAmount.toFixed(2)) });
+    const orderId = `ORD-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+
+    const newOrder = {
+      orderId,
+      items: orderItems,
+      totalAmount: parseFloat(totalAmount.toFixed(2)),
+      paymentMethod,
+      paymentStatus: paymentMethod === "COD" ? "Pending on Delivery" : "Paid Successfully",
+      deliveryAddress: deliveryAddress || {
+        fullName: user.username,
+        phone: user.phone || "",
+        street: user.address?.street || "Standard Address",
+        city: user.address?.city || "",
+        state: user.address?.state || "",
+        postalCode: user.address?.postalCode || "",
+        country: user.address?.country || "India",
+      },
+      orderedAt: new Date(),
+    };
+
+    user.orderHistory.unshift(newOrder);
 
     // 🌟 Log activity: placed order
     user.activityHistory.push({
       action: "placed_order",
-      details: `Placed order for ${orderItems.length} items — ₹${totalAmount.toFixed(2)}`,
+      details: `Placed order ${orderId} for ${orderItems.length} items — ₹${totalAmount.toFixed(2)} via ${paymentMethod}`,
     });
 
     user.cart = [];
@@ -176,7 +210,8 @@ router.post("/checkout", protect, async (req, res) => {
 
     return res.status(200).json({
       message: "Order placed successfully! 🎉",
-      order: orderItems,
+      order: newOrder,
+      orderId,
       totalAmount: totalAmount.toFixed(2),
     });
   } catch (err) {

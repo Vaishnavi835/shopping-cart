@@ -1,75 +1,107 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import StyleQuizModal from '../components/StyleQuizModal';
+import './AuthSplit.css';
 
 export default function Register() {
   const { login } = useAuth();
   const [form, setForm] = useState({
     username: '',
     emailId: '',
-    age: '',
+    phone: '',
+    age: '22',
     password: '',
-    confirmPassword: '',
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [msg, setMsg] = useState('');
+  const [agreeTerms, setAgreeTerms] = useState(true);
   const [error, setError] = useState('');
+  const [msg, setMsg] = useState('');
   const [loading, setLoading] = useState(false);
-  const [touchedPassword, setTouchedPassword] = useState(false);
+  const [showQuizModal, setShowQuizModal] = useState(false);
   const navigate = useNavigate();
+
+  // 🌟 Live Dynamic State
+  const [liveShoppers, setLiveShoppers] = useState(148);
+  const [recentOrderIndex, setRecentOrderIndex] = useState(0);
+  const [flashSeconds, setFlashSeconds] = useState(864); // ~14m 24s
+
+  const liveOrders = [
+    { name: 'Aarav Sharma', city: 'Mumbai', item: 'Wireless Bluetooth Headphones', price: '₹2,699', time: '12s ago', avatar: '👨‍💼', tag: 'Electronics' },
+    { name: 'Priya Patel', city: 'Bangalore', item: 'Cotton Comfort Hoodie', price: '₹1,299', time: '34s ago', avatar: '👩‍🎨', tag: 'Clothing' },
+    { name: 'Rahul Verma', city: 'Delhi', item: 'Smartwatch Pro GPS', price: '₹6,999', time: 'Just now', avatar: '👨‍💻', tag: 'Gadgets' },
+    { name: 'Ananya Roy', city: 'Kolkata', item: 'Polarized Sunglasses UV400', price: '₹899', time: '48s ago', avatar: '👩‍💼', tag: 'Accessories' },
+  ];
+
+  useEffect(() => {
+    // Gentle slow shopper fluctuation (every 8s)
+    const shopperInterval = setInterval(() => {
+      setLiveShoppers((prev) => Math.max(120, prev + (Math.floor(Math.random() * 5) - 2)));
+    }, 8000);
+
+    // Smooth order rotation (every 6.5s)
+    const orderInterval = setInterval(() => {
+      setRecentOrderIndex((prev) => (prev + 1) % liveOrders.length);
+    }, 6500);
+
+    // Countdown timer for live flash deal
+    const timerInterval = setInterval(() => {
+      setFlashSeconds((prev) => (prev > 0 ? prev - 1 : 900));
+    }, 1000);
+
+    return () => {
+      clearInterval(shopperInterval);
+      clearInterval(orderInterval);
+      clearInterval(timerInterval);
+    };
+  }, []);
+
+  const formatTimer = (sec) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Password requirement tests
-  const rules = [
-    { id: 'length', label: 'Minimum 8 characters', valid: form.password.length >= 8 },
-    { id: 'upper', label: 'One uppercase letter (A-Z)', valid: /[A-Z]/.test(form.password) },
-    { id: 'lower', label: 'One lowercase letter (a-z)', valid: /[a-z]/.test(form.password) },
-    { id: 'number', label: 'One numeric digit (0-9)', valid: /[0-9]/.test(form.password) },
-    { id: 'special', label: 'One special symbol (!@#$%^&*)', valid: /[^A-Za-z0-9]/.test(form.password) },
-  ];
+  // 4-level strength calculation
+  const calculateStrength = (pwd) => {
+    if (!pwd) return { level: 0, text: 'Enter a strong password' };
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd)) score++;
+    if (/[0-9]/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
 
-  const validCount = rules.filter((r) => r.valid).length;
-  const isPasswordFullyValid = validCount === rules.length;
-  const passwordsMatch = form.confirmPassword.length > 0 && form.password === form.confirmPassword;
-
-  // Strength calculation & styling
-  const getStrength = () => {
-    if (!form.password) return { label: '', color: '#334155', width: '0%', textClass: '' };
-    if (validCount <= 2) return { label: 'Weak', color: '#f43f5e', width: '33%', textClass: 'text-weak' };
-    if (validCount <= 4) return { label: 'Good', color: '#f59e0b', width: '66%', textClass: 'text-medium' };
-    return { label: 'Strong & Secure', color: '#10b981', width: '100%', textClass: 'text-strong' };
+    if (score === 1) return { level: 1, text: 'Weak. Add numbers & uppercase letters.' };
+    if (score === 2) return { level: 2, text: 'Medium. Add a special symbol.' };
+    if (score === 3) return { level: 3, text: 'Strong. Add a symbol to make it stronger.' };
+    return { level: 4, text: 'Very strong & secure password.' };
   };
 
-  const strength = getStrength();
+  const strength = calculateStrength(form.password);
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.emailId);
+  const currentOrder = liveOrders[recentOrderIndex];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMsg('');
     setError('');
+    setMsg('');
 
-    if (!form.username.trim() || !form.emailId.trim() || !form.age || !form.password) {
-      setError('Please complete all required fields.');
+    if (!form.username.trim() || !form.emailId.trim() || !form.password) {
+      setError('Please fill in all required fields.');
       return;
     }
 
-    if (!isPasswordFullyValid) {
-      setError('Please fulfill all password requirements before registering.');
-      setTouchedPassword(true);
+    if (!agreeTerms) {
+      setError('Please agree to the Terms and Privacy Policy.');
       return;
     }
 
-    if (form.password !== form.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    if (Number(form.age) < 1 || isNaN(form.age)) {
-      setError('Please enter a valid age.');
+    if (form.password.length < 6) {
+      setError('Password must be at least 6 characters.');
       return;
     }
 
@@ -81,339 +113,270 @@ export default function Register() {
         body: JSON.stringify({
           username: form.username.trim(),
           emailId: form.emailId.trim().toLowerCase(),
-          age: Number(form.age),
+          age: Number(form.age) || 21,
           password: form.password,
         }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        // Auto-login: store user & token, then redirect to products
         if (data.token && data.user) {
           login(data.user, data.token);
-          setMsg(data.message || 'Account created! Redirecting...');
-          setTimeout(() => navigate('/products'), 1500);
+          setMsg('Account created successfully! ✨');
+          setShowQuizModal(true);
         } else {
-          setMsg(data.message || 'Account successfully created! Redirecting to login...');
-          setTimeout(() => navigate('/login'), 2000);
+          setMsg('Account created! Redirecting to sign in...');
+          setTimeout(() => navigate('/login'), 1500);
         }
       } else {
-        setError(data.message || 'Registration failed.');
+        setError(data.message || 'Registration failed. Try a different email.');
       }
     } catch {
-      setError('Network error. Is the backend server running?');
+      setError('Network error. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="classy-auth-page">
-      {/* Dynamic Animated Ambient Background Orbs */}
-      <div className="ambient-orb orb-purple"></div>
-      <div className="ambient-orb orb-cyan"></div>
-      <div className="ambient-orb orb-pink"></div>
-
-      <div className="classy-auth-card">
-        {/* Brand Header */}
-        <div className="classy-brand-header">
-          <div className="classy-logo-pill">
-            <svg width="20" height="20" viewBox="0 0 36 36" fill="none">
-              <rect width="36" height="36" rx="9" fill="url(#nova-reg-grad)" />
-              <path d="M11 25V11L25 25V11" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M25 6.5L25.8 8.5L28 9.3L25.8 10.1L25 12.1L24.2 10.1L22 9.3L24.2 8.5Z" fill="#fff3e0" />
-              <defs>
-                <linearGradient id="nova-reg-grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#c94b72" />
-                  <stop offset="1" stopColor="#d4a373" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <span className="logo-text">NOVA</span>
+    <div className="auth-light-wrapper">
+      <div className="auth-light-card">
+        {/* Left Column: Light Clean Form */}
+        <div className="auth-light-left">
+          <div className="auth-brand-badge">
+            <span className="brand-dot"></span> NOVA Official
           </div>
-          <h1 className="classy-title">Create Account</h1>
-          <p className="classy-subtitle">Join the exclusive shopping experience with NOVA</p>
-        </div>
 
-        {/* Navigation Tabs */}
-        <div className="classy-nav-tabs">
-          <Link to="/login" className="classy-tab">Log In</Link>
-          <button type="button" className="classy-tab active">Register</button>
-        </div>
-
-        {/* Notifications */}
-        {msg && (
-          <div className="classy-alert classy-alert-success">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-              <polyline points="22 4 12 14.01 9 11.01" />
-            </svg>
-            <span>{msg}</span>
+          <div className="auth-light-header">
+            <h1 className="auth-title-clean">Create your account</h1>
+            <p className="auth-subtitle-clean">Takes less than a minute.</p>
           </div>
-        )}
 
-        {error && (
-          <div className="classy-alert classy-alert-error">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            <span>{error}</span>
-          </div>
-        )}
+          {error && <div className="auth-alert-error">⚠️ {error}</div>}
+          {msg && <div className="auth-alert-success">✅ {msg}</div>}
 
-        <form onSubmit={handleSubmit} noValidate className="classy-form">
-          {/* Username */}
-          <div className="classy-input-group">
-            <label htmlFor="reg-username">Full Name</label>
-            <div className="classy-input-container">
-              <span className="classy-input-icon">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </span>
+          <form onSubmit={handleSubmit} className="auth-form-clean">
+            {/* Full Name */}
+            <div className="auth-field-clean">
+              <label>Full name</label>
               <input
-                id="reg-username"
                 type="text"
                 name="username"
-                placeholder="Eleanor Vance"
+                placeholder="e.g. Vaishnavi"
                 value={form.username}
                 onChange={handleChange}
                 required
               />
             </div>
-          </div>
 
-          {/* Email Address */}
-          <div className="classy-input-group">
-            <label htmlFor="reg-email">Email Address</label>
-            <div className="classy-input-container">
-              <span className="classy-input-icon">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <polyline points="22,6 12,13 2,6" />
-                </svg>
-              </span>
-              <input
-                id="reg-email"
-                type="email"
-                name="emailId"
-                placeholder="eleanor@example.com"
-                value={form.emailId}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          {/* Age */}
-          <div className="classy-input-group">
-            <label htmlFor="reg-age">Age</label>
-            <div className="classy-input-container">
-              <span className="classy-input-icon">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-              </span>
-              <input
-                id="reg-age"
-                type="number"
-                name="age"
-                placeholder="e.g. 25"
-                min="1"
-                max="120"
-                value={form.age}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          {/* Password */}
-          <div className="classy-input-group">
-            <label htmlFor="reg-password">Password</label>
-            <div className="classy-input-container">
-              <span className="classy-input-icon">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-              </span>
-              <input
-                id="reg-password"
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                placeholder="Create strong password"
-                value={form.password}
-                onChange={(e) => {
-                  handleChange(e);
-                  setTouchedPassword(true);
-                }}
-                required
-              />
-              <button
-                type="button"
-                className="classy-eye-btn"
-                onClick={() => setShowPassword(!showPassword)}
-                title={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                    <line x1="1" y1="1" x2="23" y2="23" />
-                  </svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                )}
-              </button>
-            </div>
-
-            {/* Live Password Strength Meter */}
-            {form.password.length > 0 && (
-              <div className="classy-strength-meter">
-                <div className="strength-header">
-                  <span className="strength-label">Security Strength:</span>
-                  <span className={`strength-badge ${strength.textClass}`}>
-                    {strength.label}
+            {/* Email with checkmark */}
+            <div className="auth-field-clean">
+              <label>Email</label>
+              <div className="input-with-check-light">
+                <input
+                  type="email"
+                  name="emailId"
+                  placeholder="name@email.com"
+                  value={form.emailId}
+                  onChange={handleChange}
+                  required
+                />
+                {isEmailValid && (
+                  <span className="check-badge-light" title="Valid email address">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5">
+                      <circle cx="12" cy="12" r="10" stroke="#10b981" />
+                      <polyline points="16 9 10 15 7 12" />
+                    </svg>
                   </span>
-                </div>
-                <div className="strength-bar-bg">
-                  <div
-                    className="strength-bar-fill"
-                    style={{
-                      width: strength.width,
-                      backgroundColor: strength.color,
-                      boxShadow: `0 0 12px ${strength.color}`,
-                    }}
-                  />
-                </div>
+                )}
               </div>
-            )}
+            </div>
 
-            {/* Live Password Requirements Checklist */}
-            {(touchedPassword || form.password.length > 0) && (
-              <div className="classy-checklist-card">
-                <div className="checklist-heading">Password Security Requirements:</div>
-                <div className="checklist-items">
-                  {rules.map((rule) => (
-                    <div
-                      key={rule.id}
-                      className={`checklist-row ${rule.valid ? 'is-valid' : 'is-pending'}`}
-                    >
-                      <div className="check-badge">
-                        {rule.valid ? (
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        ) : (
-                          <span className="dot-pending"></span>
-                        )}
-                      </div>
-                      <span className="checklist-text">{rule.label}</span>
-                    </div>
-                  ))}
-                </div>
+            {/* Mobile Number */}
+            <div className="auth-field-clean">
+              <label>Mobile number</label>
+              <div className="phone-combo-light">
+                <span className="phone-code-light">+91</span>
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="98765 43210"
+                  value={form.phone}
+                  onChange={handleChange}
+                />
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* Confirm Password */}
-          <div className="classy-input-group">
-            <label htmlFor="reg-confirm">Confirm Password</label>
-            <div className="classy-input-container">
-              <span className="classy-input-icon">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 2l-2 2m-1.5 1.5L16 7m-4 4l-4 4-2-2 4-4m1.5-1.5L13 6m6-4l2 2" />
-                  <circle cx="7.5" cy="16.5" r="4.5" />
-                </svg>
-              </span>
+            {/* Password with 4-segment strength */}
+            <div className="auth-field-clean">
+              <label>Password</label>
               <input
-                id="reg-confirm"
-                type={showConfirmPassword ? 'text' : 'password'}
-                name="confirmPassword"
-                placeholder="Re-enter password"
-                value={form.confirmPassword}
+                type="password"
+                name="password"
+                placeholder="••••••••••••"
+                value={form.password}
                 onChange={handleChange}
                 required
               />
-              <button
-                type="button"
-                className="classy-eye-btn"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                title={showConfirmPassword ? 'Hide password' : 'Show password'}
-              >
-                {showConfirmPassword ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                    <line x1="1" y1="1" x2="23" y2="23" />
-                  </svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                )}
-              </button>
-            </div>
-            {form.confirmPassword.length > 0 && (
-              <div className={`match-badge ${passwordsMatch ? 'match-valid' : 'match-invalid'}`}>
-                {passwordsMatch ? (
-                  <>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    <span>Passwords match</span>
-                  </>
-                ) : (
-                  <>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                    <span>Passwords do not match</span>
-                  </>
-                )}
+
+              <div className="strength-row-light">
+                <div className={`segment-light ${strength.level >= 1 ? 'seg-active' : ''}`}></div>
+                <div className={`segment-light ${strength.level >= 2 ? 'seg-active' : ''}`}></div>
+                <div className={`segment-light ${strength.level >= 3 ? 'seg-active' : ''}`}></div>
+                <div className={`segment-light ${strength.level >= 4 ? 'seg-active' : ''}`}></div>
               </div>
-            )}
+              <p className="strength-caption">{strength.text}</p>
+            </div>
+
+            {/* Terms checkbox */}
+            <label className="checkbox-clean">
+              <input
+                type="checkbox"
+                checked={agreeTerms}
+                onChange={(e) => setAgreeTerms(e.target.checked)}
+              />
+              <span>I agree to the <a href="#terms">Terms and Privacy Policy</a></span>
+            </label>
+
+            {/* Primary Action Button */}
+            <button
+              type="submit"
+              className="btn-primary-clean"
+              disabled={loading}
+            >
+              {loading ? 'Creating account...' : 'Create account'}
+            </button>
+
+            {/* Bottom link */}
+            <div className="switch-text-clean">
+              Already have an account? <Link to="/login">Sign in</Link>
+            </div>
+          </form>
+        </div>
+
+        {/* Right Column: High-End Live Interactive Experience */}
+        <div className="auth-light-right">
+          {/* Header */}
+          <div className="right-card-header">
+            <h2 className="what-you-get-clean">What you get</h2>
+            <div className="live-pill-indicator">
+              <span className="live-pulse-dot"></span>
+              <span className="live-pulse-text">LIVE ACTIVITY</span>
+            </div>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="classy-submit-btn"
-            disabled={loading || (form.password.length > 0 && !isPasswordFullyValid)}
-          >
-            {loading ? (
-              <span className="classy-loader-inline">
-                <span className="spinner-ring"></span>
-                <span>Creating Profile...</span>
-              </span>
-            ) : (
-              <span className="btn-content">
-                <span>Complete Registration</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
+          {/* Benefits List */}
+          <ul className="benefits-list-clean">
+            <li className="benefit-row-clean">
+              <div className="benefit-icon-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                 </svg>
-              </span>
-            )}
-          </button>
-        </form>
+              </div>
+              <div className="benefit-content">
+                <strong>Wishlists you can share</strong>
+                <span>Collaborate with friends and family seamlessly</span>
+              </div>
+            </li>
 
-        {/* Footer */}
-        <div className="classy-auth-footer">
-          <span>Already have an account?</span>
-          <Link to="/login" className="classy-link-highlight">Log in here</Link>
+            <li className="benefit-row-clean">
+              <div className="benefit-icon-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+              </div>
+              <div className="benefit-content">
+                <strong>Price drop alerts</strong>
+                <span>Get notified instantly when saved products drop</span>
+              </div>
+            </li>
+
+            <li className="benefit-row-clean">
+              <div className="benefit-icon-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.2">
+                  <rect x="1" y="3" width="15" height="13" />
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                  <circle cx="5.5" cy="18.5" r="2.5" />
+                  <circle cx="18.5" cy="18.5" r="2.5" />
+                </svg>
+              </div>
+              <div className="benefit-content">
+                <strong>Live order tracking</strong>
+                <span>Real-time dispatch updates with precise courier ETA</span>
+              </div>
+            </li>
+
+            <li className="benefit-row-clean">
+              <div className="benefit-icon-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.2">
+                  <polyline points="20 12 20 22 4 22 4 12" />
+                  <rect x="2" y="7" width="20" height="5" />
+                  <line x1="12" y1="22" x2="12" y2="7" />
+                  <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+                  <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+                </svg>
+              </div>
+              <div className="benefit-content">
+                <strong>Welcome offer on first order</strong>
+                <span>Flat 20% instant discount applied at checkout</span>
+              </div>
+            </li>
+          </ul>
+
+          {/* 🌟 ENHANCED LIVE SHOWCASE CARD */}
+          <div className="live-interactive-card">
+            {/* Live Stats Header */}
+            <div className="live-card-topbar">
+              <div className="live-stat-badge">
+                <span className="live-green-radar"></span>
+                <span><strong>{liveShoppers}</strong> shoppers active now</span>
+              </div>
+              <div className="live-flash-timer">
+                ⚡ Offer ends in <strong>{formatTimer(flashSeconds)}</strong>
+              </div>
+            </div>
+
+            {/* Live Real-Time Purchase Activity Tile with Smooth Animated Transition */}
+            <div className="live-order-tile" key={recentOrderIndex}>
+              <div className="live-avatar-circle">{currentOrder.avatar}</div>
+              <div className="live-order-info">
+                <div className="live-buyer-row">
+                  <span className="buyer-name">{currentOrder.name}</span>
+                  <span className="buyer-city">📍 {currentOrder.city}</span>
+                </div>
+                <div className="buyer-product-name">{currentOrder.item}</div>
+                <div className="buyer-meta">
+                  <span className="buyer-price">{currentOrder.price}</span>
+                  <span className="buyer-tag">{currentOrder.tag}</span>
+                  <span className="buyer-time">✓ {currentOrder.time}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Smooth live transition ticker line */}
+            <div className="live-cycle-bar">
+              <div className="live-cycle-fill" key={`bar-${recentOrderIndex}`}></div>
+            </div>
+
+            {/* Live Verification Bar */}
+            <div className="live-security-strip">
+              <span>🛡️ 256-Bit SSL Encrypted</span>
+              <span>•</span>
+              <span>⭐ 4.9/5 Rating</span>
+              <span>•</span>
+              <span>⚡ Fast Delivery</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Style Quiz Modal upon signup */}
+      <StyleQuizModal
+        isOpen={showQuizModal}
+        onClose={() => navigate('/products')}
+        onCompleted={() => navigate('/')}
+      />
     </div>
   );
 }

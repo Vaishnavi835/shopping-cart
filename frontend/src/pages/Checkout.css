@@ -1,0 +1,901 @@
+/* ══════════════════════════════════════════════════════════════
+   CHECKOUT & PAYMENTS PAGE STYLES
+   Matching Child.com & Alpa Modern Pastel E-Commerce Aesthetic:
+   - Sage-mint hero banner with 3-step checkout tracker
+   - Multi-tab payment gateway (UPI, Cards, NetBanking, COD)
+   - Live interactive credit card preview
+   - Sticky order review & animated payment success screen
+   ══════════════════════════════════════════════════════════════ */
+
+.checkout-page-wrapper {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 4rem;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1e293b;
+}
+
+/* ─── 1. TOP HERO BANNER & PROGRESS TRACKER ─── */
+.checkout-banner-card {
+  background: linear-gradient(135deg, #d2eade 0%, #e8f5ee 50%, #dff0e6 100%);
+  border-radius: 28px;
+  padding: 2.25rem 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 14px 36px -8px rgba(46, 125, 50, 0.08);
+  margin-bottom: 2.25rem;
+}
+
+.checkout-banner-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: 220px;
+  width: 130px;
+  height: 130px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  filter: blur(24px);
+  pointer-events: none;
+}
+
+.checkout-banner-left {
+  z-index: 2;
+}
+
+.checkout-breadcrumb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #1b382b;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.65);
+  padding: 5px 14px;
+  border-radius: 50px;
+  width: fit-content;
+  margin-bottom: 0.6rem;
+}
+
+.checkout-banner-title {
+  font-size: 2.2rem;
+  font-weight: 850;
+  color: #1b382b;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+/* 3-Step Pill Tracker */
+.checkout-steps-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 6px 14px;
+  border-radius: 50px;
+  box-shadow: 0 4px 16px rgba(27, 56, 43, 0.06);
+}
+
+.checkout-step-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 750;
+  color: #64748b;
+  padding: 5px 12px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.checkout-step-pill.completed {
+  color: #059669;
+  background: #dcfce7;
+}
+
+.checkout-step-pill.active {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.checkout-step-arrow {
+  color: #cbd5e1;
+  font-size: 0.8rem;
+}
+
+.checkout-ssl-badge {
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #1b382b;
+  box-shadow: 0 4px 14px rgba(27, 56, 43, 0.06);
+}
+
+/* ─── 2. MAIN 2-COLUMN GRID ─── */
+.checkout-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2.25rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .checkout-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── 3. LEFT COLUMN: DETAILS & PAYMENT MODES ─── */
+.checkout-forms-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.checkout-section-card {
+  background: #ffffff;
+  border: 1.5px solid #f1ece4;
+  border-radius: 24px;
+  padding: 2rem 2.25rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.035);
+}
+
+.section-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1.5px solid #f1ece4;
+}
+
+.section-card-header h3 {
+  font-size: 1.25rem;
+  font-weight: 850;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Saved Address Selector Card */
+.saved-address-chip-card {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: all 0.2s ease;
+}
+
+.saved-address-chip-card.selected {
+  border-color: #059669;
+  background: #f0fdf4;
+}
+
+.address-chip-info {
+  font-size: 0.92rem;
+  color: #1e293b;
+  line-height: 1.5;
+}
+
+.address-chip-name {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.address-chip-phone {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.address-toggle-btn {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 750;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.address-toggle-btn:hover {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+/* Form Inputs Grid */
+.checkout-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.full-col {
+  grid-column: 1 / -1;
+}
+
+.checkout-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.checkout-field label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.checkout-field input,
+.checkout-field select {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 11px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.checkout-field input:focus,
+.checkout-field select:focus {
+  background: #ffffff;
+  border-color: #2d5a45;
+  box-shadow: 0 0 0 3px rgba(45, 90, 69, 0.1);
+}
+
+/* Delivery Speed Radio Cards */
+.delivery-speed-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.delivery-speed-card {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.delivery-speed-card.selected {
+  border-color: #059669;
+  background: #f0fdf4;
+}
+
+.speed-radio-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delivery-speed-card.selected .speed-radio-dot {
+  border-color: #059669;
+  background: #059669;
+}
+
+.speed-radio-inner {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.speed-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.speed-sub {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* ─── 4. PAYMENT MODES ACCORDION / TABS ─── */
+.payment-tabs-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 680px) {
+  .payment-tabs-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.payment-tab-btn {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.payment-tab-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.payment-tab-btn.active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+}
+
+.tab-icon {
+  font-size: 1.3rem;
+}
+
+/* 4A. UPI Payment View */
+.upi-panel-box {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+
+.upi-apps-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.upi-app-btn {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 750;
+  color: #1e293b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.upi-app-btn.selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.upi-id-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.upi-id-input {
+  flex: 1;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 50px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.upi-verify-btn {
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  padding: 0 20px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* 4B. Interactive Credit Card Live Preview */
+.card-live-preview {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 20px;
+  padding: 1.5rem 1.75rem;
+  color: #ffffff;
+  max-width: 380px;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-live-preview::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 140px;
+  height: 140px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.card-preview-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.75rem;
+}
+
+.card-chip-icon {
+  font-size: 1.6rem;
+}
+
+.card-network-logo {
+  font-weight: 850;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  color: #38bdf8;
+}
+
+.card-preview-number {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.25rem;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.card-preview-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.card-holder-col label,
+.card-expiry-col label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.card-holder-val,
+.card-expiry-val {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* 4C. Net Banking Bank Selection */
+.netbanking-banks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.bank-choice-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bank-choice-card.selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+/* 4D. Cash on Delivery (COD) */
+.cod-panel-box {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 1.5rem;
+}
+
+.cod-note {
+  font-size: 0.92rem;
+  color: #1e293b;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+/* ─── 5. RIGHT COLUMN: STICKY ORDER REVIEW ─── */
+.checkout-summary-column {
+  position: sticky;
+  top: 90px;
+}
+
+.checkout-summary-card {
+  background: #ffffff;
+  border: 1.5px solid #f1ece4;
+  border-radius: 26px;
+  padding: 2rem 1.85rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.checkout-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f1ece4;
+}
+
+.checkout-summary-header h3 {
+  font-size: 1.15rem;
+  font-weight: 850;
+  color: #0f172a;
+}
+
+/* Cart items miniature preview */
+.checkout-items-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-bottom: 1.25rem;
+  padding-right: 4px;
+}
+
+.checkout-item-mini-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkout-item-mini-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #f8fafc;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid #e2e8f0;
+}
+
+.checkout-item-mini-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkout-item-mini-name {
+  font-size: 0.85rem;
+  font-weight: 750;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.checkout-item-mini-qty {
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+.checkout-item-mini-price {
+  font-size: 0.92rem;
+  font-weight: 850;
+  color: #0f172a;
+  flex-shrink: 0;
+}
+
+/* Price Breakdown */
+.checkout-price-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1.25rem;
+}
+
+.checkout-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.checkout-price-row span:last-child {
+  font-weight: 750;
+  color: #0f172a;
+}
+
+.checkout-price-row.discount {
+  color: #059669;
+}
+
+.checkout-price-row.discount span:last-child {
+  color: #059669;
+}
+
+.checkout-divider {
+  height: 1.5px;
+  background: #f1ece4;
+  margin: 1.25rem 0;
+}
+
+.checkout-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.5rem;
+}
+
+.checkout-total-label {
+  font-size: 1.1rem;
+  font-weight: 850;
+  color: #0f172a;
+}
+
+.checkout-total-val {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+/* Pay and Complete Button */
+.checkout-pay-btn {
+  width: 100%;
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  padding: 1.05rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
+}
+
+.checkout-pay-btn:hover:not(:disabled) {
+  background: #1b382b;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(27, 56, 43, 0.25);
+}
+
+.checkout-pay-btn:disabled {
+  background: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Guarantee list */
+.checkout-guarantee-list {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f1ece4;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkout-guarantee-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+/* ─── 6. PAYMENT PROCESSING & SUCCESS OVERLAY / SCREEN ─── */
+.payment-processing-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+}
+
+.payment-modal-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.processing-spinner-box {
+  width: 72px;
+  height: 72px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #0f172a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1.5rem;
+}
+
+.payment-success-badge {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.35);
+}
+
+.payment-modal-card h2 {
+  font-size: 1.6rem;
+  font-weight: 850;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.payment-modal-card p {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.payment-receipt-box {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  margin-bottom: 8px;
+  color: #64748b;
+}
+
+.receipt-row:last-child {
+  margin-bottom: 0;
+}
+
+.receipt-row span:last-child {
+  font-weight: 750;
+  color: #0f172a;
+}
+
+.payment-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.receipt-btn-primary {
+  flex: 1;
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  padding: 0.9rem 1.25rem;
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.receipt-btn-primary:hover {
+  background: #1b382b;
+}
+
+.receipt-btn-secondary {
+  flex: 1;
+  background: #f1f5f9;
+  color: #0f172a;
+  border: none;
+  border-radius: 50px;
+  padding: 0.9rem 1.25rem;
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.receipt-btn-secondary:hover {
+  background: #e2e8f0;
+}
+

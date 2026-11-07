@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Toast, useToast } from '../components/Toast';
+import './Dashboard.css';
 
 export default function Dashboard() {
-  const { user, token, authFetch, setCartCount } = useAuth();
+  const { user, authFetch, setCartCount } = useAuth();
   const { toast, showToast } = useToast();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
@@ -16,8 +18,10 @@ export default function Dashboard() {
   const [recommendations, setRecommendations] = useState([]);
   const [activityHistory, setActivityHistory] = useState([]);
   const [restockList, setRestockList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('Electronics');
 
-  // Fetch all dashboard data
+  // Load all dashboard information
   const loadDashboard = async () => {
     setLoading(true);
     try {
@@ -81,9 +85,8 @@ export default function Dashboard() {
       });
       const data = await res.json();
       if (res.ok) {
-        showToast('🎯 Shopping budget successfully updated!');
+        showToast('🎯 Budget updated successfully!');
         setIsEditingBudget(false);
-        // Refresh dashboard recommendations
         loadDashboard();
       } else {
         showToast(data.message || 'Error updating budget');
@@ -128,11 +131,18 @@ export default function Dashboard() {
     }
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="shop-loader" style={{ minHeight: '60vh' }}>
+      <div className="shop-loader" style={{ minHeight: '65vh' }}>
         <div className="shop-spinner"></div>
-        <span>Preparing your personalized shopping dashboard...</span>
+        <span>Preparing your personal shopping dashboard...</span>
       </div>
     );
   }
@@ -143,75 +153,206 @@ export default function Dashboard() {
   const budgetPercent = budget > 0 ? Math.min(100, Math.round((totalSpent / budget) * 100)) : 0;
   const isBudgetExceeded = budget > 0 && remaining < 0;
 
+  // Categories matching the reference screenshot design
+  const categoryTiles = [
+    { name: 'Electronics', icon: '💻' },
+    { name: 'Clothing', icon: '👕' },
+    { name: 'Footwear', icon: '👟' },
+    { name: 'Accessories', icon: '👜' },
+    { name: 'Kitchen', icon: '🍳' },
+    { name: 'Sports', icon: '⚽' },
+    { name: 'Books', icon: '📚' },
+    { name: 'Wellness', icon: '🌿' },
+  ];
+
   return (
-    <div className="dashboard-container">
-      {/* Top Welcome Banner */}
-      <div className="dashboard-hero-card">
-        <div className="dashboard-hero-left">
-          <div className="hero-avatar">
-            {user?.username ? user.username.charAt(0).toUpperCase() : 'U'}
+    <div className="dash-page-wrapper">
+      {/* ── 1. Sage-Mint Hero Banner (Matching Reference Image) ── */}
+      <section className="dash-banner-card">
+        <div className="dash-banner-content">
+          <h1 className="dash-banner-title">
+            Personalized dashboard
+          </h1>
+          <div className="dash-banner-subtitle">
+            shopping with joy
           </div>
-          <div>
-            <div className="hero-badge">SmartCart Intelligence Center</div>
-            <h1 className="hero-title">Welcome back, {user?.username}!</h1>
-            <p className="hero-subtitle">
-              Here is your personalized shopping overview, budget tracker &amp; tailored recommendations.
-            </p>
-          </div>
+
+          <form onSubmit={handleSearchSubmit} className="dash-banner-search">
+            <span className="dash-search-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+            <input
+              type="text"
+              placeholder="Search products, brands and deals..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </form>
         </div>
 
-        {/* Quick stat counters */}
-        <div className="dashboard-stat-row">
-          <Link to="/orders" className="hero-stat-box">
-            <span className="stat-num">{dashboardData?.totalOrders || 0}</span>
-            <span className="stat-label">Orders Placed</span>
-          </Link>
-          <Link to="/cart" className="hero-stat-box">
-            <span className="stat-num">{dashboardData?.cartCount || 0}</span>
-            <span className="stat-label">In Your Bag</span>
-          </Link>
-          <Link to="/wishlist" className="hero-stat-box">
-            <span className="stat-num">{dashboardData?.wishlistCount || 0}</span>
-            <span className="stat-label">Wishlist Items</span>
-          </Link>
+        {/* Right Art Graphic */}
+        <div className="dash-banner-artwork">
+          <div className="artwork-illustration-box">
+            <span className="artwork-main-emoji">🛍️</span>
+            <div className="artwork-sub-badges">
+              <span className="art-badge">⭐ 4.9 Rating</span>
+              <span className="art-badge">⚡ Instant Dispatch</span>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* ─── 1. BUDGET MONITORING SECTION ─── */}
-      <div className="dashboard-section-card budget-monitor-card">
-        <div className="budget-header-row">
+      {/* ── 2. Quick Stat Chips ── */}
+      <section className="dash-stats-strip">
+        <Link to="/orders" className="dash-stat-pill">
+          <div className="dash-stat-icon-wrap icon-emerald">📦</div>
+          <div className="dash-stat-info">
+            <span className="dash-stat-value">{dashboardData?.totalOrders || 0}</span>
+            <span className="dash-stat-label">Orders Placed</span>
+          </div>
+        </Link>
+
+        <Link to="/cart" className="dash-stat-pill">
+          <div className="dash-stat-icon-wrap icon-blue">🛍️</div>
+          <div className="dash-stat-info">
+            <span className="dash-stat-value">{dashboardData?.cartCount || 0}</span>
+            <span className="dash-stat-label">Items in Bag</span>
+          </div>
+        </Link>
+
+        <Link to="/wishlist" className="dash-stat-pill">
+          <div className="dash-stat-icon-wrap icon-purple">🤍</div>
+          <div className="dash-stat-info">
+            <span className="dash-stat-value">{dashboardData?.wishlistCount || 0}</span>
+            <span className="dash-stat-label">Wishlisted Items</span>
+          </div>
+        </Link>
+
+        <div className="dash-stat-pill">
+          <div className="dash-stat-icon-wrap icon-amber">💰</div>
+          <div className="dash-stat-info">
+            <span className="dash-stat-value">₹{remaining.toLocaleString()}</span>
+            <span className="dash-stat-label">Safe Budget Remaining</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 3. Select Categories (Matching Reference Image) ── */}
+      <section>
+        <div className="dash-section-row">
+          <h2 className="dash-section-title">Select Categories</h2>
+          <Link to="/products" className="dash-show-all-link">Show All</Link>
+        </div>
+
+        <div className="dash-categories-scroll">
+          {categoryTiles.map((cat) => {
+            const isActive = activeCategory.toLowerCase() === cat.name.toLowerCase();
+            return (
+              <Link
+                key={cat.name}
+                to={`/products?category=${encodeURIComponent(cat.name)}`}
+                onClick={() => setActiveCategory(cat.name)}
+                className={`dash-category-card ${isActive ? 'active-card' : ''}`}
+              >
+                <span className="dash-category-icon">{cat.icon}</span>
+                <span className="dash-category-name">{cat.name}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ── 4. Most Popular / Curated Recommendations (Matching Reference Image) ── */}
+      {recommendations.length > 0 && (
+        <section>
+          <div className="dash-section-row">
+            <h2 className="dash-section-title">Most Popular</h2>
+            <Link to="/products" className="dash-show-all-link">Show All</Link>
+          </div>
+
+          <div className="dash-products-grid">
+            {recommendations.slice(0, 4).map((p) => {
+              const hasDiscount = p.discount > 0;
+              const finalPrice = hasDiscount ? p.discountedPrice : p.productPrice;
+
+              return (
+                <div key={p._id} className="dash-product-card">
+                  <div className="dash-product-image-box">
+                    {p.imageUrl ? (
+                      <img src={p.imageUrl} alt={p.productName} />
+                    ) : (
+                      <span style={{ fontSize: '3rem' }}>📦</span>
+                    )}
+                    {hasDiscount && (
+                      <span className="dash-discount-ribbon">-{p.discount}%</span>
+                    )}
+                  </div>
+
+                  <div className="dash-product-body">
+                    <span className="dash-product-category">{p.category}</span>
+                    <h3 className="dash-product-title" title={p.productName}>
+                      {p.productName}
+                    </h3>
+
+                    <div className="dash-product-footer">
+                      <div className="dash-price-group">
+                        <span className="dash-price-current">₹{finalPrice?.toLocaleString()}</span>
+                        {hasDiscount && (
+                          <span className="dash-price-original">₹{p.productPrice?.toLocaleString()}</span>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        className="dash-add-cart-btn"
+                        onClick={() => handleAddToCart(p._id)}
+                      >
+                        + Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* ── 5. Monthly Shopping Budget Tracker Card ── */}
+      <section className="dash-budget-card">
+        <div className="dash-budget-top">
           <div>
-            <div className="section-pill">Feature 20 • Smart Financial Control</div>
-            <h2 className="section-heading">💰 Monthly Shopping Budget Tracker</h2>
-            <p className="section-desc">
-              Set a limit to monitor your fashion expenses and get recommendations within your remaining balance.
-            </p>
+            <span className="dash-budget-badge">Personal Finance Assistant</span>
+            <h2 className="dash-budget-title">Monthly Shopping Budget Tracker</h2>
           </div>
 
           {!isEditingBudget ? (
             <button
               type="button"
-              className="shop-btn-outline"
+              className="dash-budget-btn"
               onClick={() => setIsEditingBudget(true)}
             >
               ✏️ {budget > 0 ? 'Adjust Budget' : 'Set Budget'}
             </button>
           ) : (
-            <div className="budget-edit-controls">
+            <div className="dash-budget-edit-bar">
               <input
                 type="number"
-                className="budget-input"
+                className="dash-budget-input"
                 placeholder="₹ e.g. 10000"
                 value={budgetInput}
                 onChange={(e) => setBudgetInput(e.target.value)}
                 min="0"
               />
-              <button type="button" className="shop-btn-primary" onClick={handleSaveBudget}>
+              <button type="button" className="dash-budget-save-btn" onClick={handleSaveBudget}>
                 Save
               </button>
               <button
                 type="button"
-                className="shop-btn-outline"
+                className="dash-budget-cancel-btn"
                 onClick={() => setIsEditingBudget(false)}
               >
                 Cancel
@@ -220,306 +361,171 @@ export default function Dashboard() {
           )}
         </div>
 
-        {budget === 0 ? (
-          <div className="budget-empty-callout">
-            <span>💡 You haven't set a shopping budget yet. Set one above to enable automatic overspend alerts and tailored recommendations!</span>
+        <div className="dash-budget-metrics">
+          <div className="budget-metric-box">
+            <span className="metric-title">Set Monthly Budget</span>
+            <span className="metric-amount">₹{budget.toLocaleString()}</span>
           </div>
-        ) : (
-          <div className="budget-progress-container">
-            <div className="budget-metrics-grid">
-              <div className="budget-metric">
-                <span className="metric-label">Set Budget</span>
-                <span className="metric-val">₹{budget.toLocaleString()}</span>
-              </div>
-              <div className="budget-metric">
-                <span className="metric-label">Total Spent So Far</span>
-                <span className="metric-val spent">₹{totalSpent.toLocaleString()}</span>
-              </div>
-              <div className="budget-metric">
-                <span className="metric-label">Remaining Safe Budget</span>
-                <span className={`metric-val ${isBudgetExceeded ? 'danger' : 'safe'}`}>
-                  ₹{remaining.toLocaleString()}
-                </span>
-              </div>
-            </div>
 
-            {/* Progress Bar */}
-            <div className="budget-bar-track">
-              <div
-                className={`budget-bar-fill ${isBudgetExceeded ? 'bar-exceeded' : budgetPercent > 75 ? 'bar-warning' : 'bar-normal'}`}
-                style={{ width: `${Math.min(100, budgetPercent)}%` }}
-              />
-            </div>
-
-            <div className="budget-bar-footer">
-              <span>{budgetPercent}% of monthly budget spent</span>
-              {isBudgetExceeded ? (
-                <span className="budget-status-tag danger">⚠️ Budget Exceeded by ₹{Math.abs(remaining).toLocaleString()}</span>
-              ) : (
-                <span className="budget-status-tag safe">✅ On Track</span>
-              )}
-            </div>
+          <div className="budget-metric-box">
+            <span className="metric-title">Spent So Far</span>
+            <span className="metric-amount">₹{totalSpent.toLocaleString()}</span>
           </div>
-        )}
-      </div>
 
-      {/* ─── 2. BUDGET-FRIENDLY PICKS ─── */}
-      {budget > 0 && remaining > 0 && budgetRecommendations.length > 0 && (
-        <div className="dashboard-section-card">
-          <div className="section-header-flex">
+          <div className="budget-metric-box">
+            <span className="metric-title">Safe Remaining Balance</span>
+            <span className={`metric-amount ${isBudgetExceeded ? 'red' : 'green'}`}>
+              ₹{remaining.toLocaleString()}
+            </span>
+          </div>
+        </div>
+
+        <div className="dash-progress-track">
+          <div
+            className={`dash-progress-fill ${isBudgetExceeded ? 'fill-exceeded' : ''}`}
+            style={{ width: `${Math.min(100, budgetPercent)}%` }}
+          ></div>
+        </div>
+
+        <div className="dash-progress-footnote">
+          <span>{budgetPercent}% of your monthly budget used</span>
+          <span>{isBudgetExceeded ? '⚠️ Over Budget' : '✅ Within Safe Limits'}</span>
+        </div>
+      </section>
+
+      {/* ── 6. Budget-Friendly Recommendations (Under Safe Limit) ── */}
+      {budgetRecommendations.length > 0 && (
+        <section>
+          <div className="dash-section-row">
             <div>
-              <div className="section-pill">Feature 21 • Smart Recommendations</div>
-              <h2 className="section-heading">🎯 Budget-Friendly Picks (Under ₹{remaining.toLocaleString()})</h2>
-              <p className="section-desc">
-                High-value products carefully picked to fit within your remaining balance.
-              </p>
+              <h2 className="dash-section-title">Budget-Friendly Picks</h2>
+              <span className="shop-section-sub">Carefully selected to fit within your remaining balance</span>
             </div>
-            <Link to="/products" className="dashboard-view-all">
-              Explore All ›
-            </Link>
+            <Link to="/products" className="dash-show-all-link">Show All</Link>
           </div>
 
-          <div className="dashboard-horizontal-shelf">
-            {budgetRecommendations.map((p) => {
+          <div className="dash-products-grid">
+            {budgetRecommendations.slice(0, 4).map((p) => {
               const hasDiscount = p.discount > 0;
               const finalPrice = hasDiscount ? p.discountedPrice : p.productPrice;
 
               return (
-                <div key={p._id} className="shelf-card">
-                  <div className="shelf-img-box">
+                <div key={p._id} className="dash-product-card">
+                  <div className="dash-product-image-box">
                     {p.imageUrl ? (
                       <img src={p.imageUrl} alt={p.productName} />
                     ) : (
-                      <span>📦</span>
+                      <span style={{ fontSize: '3rem' }}>📦</span>
                     )}
                     {hasDiscount && (
-                      <span className="shelf-discount">{p.discount}% OFF</span>
+                      <span className="dash-discount-ribbon">-{p.discount}%</span>
                     )}
                   </div>
-                  <div className="shelf-details">
-                    <div className="shelf-cat">{p.category}</div>
-                    <div className="shelf-name" title={p.productName}>{p.productName}</div>
-                    <div className="shelf-price-row">
-                      <span className="shelf-price">₹{finalPrice?.toLocaleString()}</span>
-                      {hasDiscount && (
-                        <span className="shelf-old-price">₹{p.productPrice?.toLocaleString()}</span>
-                      )}
-                    </div>
-                    <button
-                      type="button"
-                      className="shelf-add-btn"
-                      onClick={() => handleAddToCart(p._id)}
-                    >
-                      + Add to Bag
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
-      {/* ─── 3. RECENTLY VIEWED PRODUCTS ─── */}
-      {recentlyViewed.length > 0 && (
-        <div className="dashboard-section-card">
-          <div className="section-header-flex">
-            <div>
-              <div className="section-pill">Feature 25 • Personalization</div>
-              <h2 className="section-heading">👀 Recently Viewed Products</h2>
-              <p className="section-desc">Jump straight back into styles and products you were inspecting.</p>
-            </div>
-          </div>
+                  <div className="dash-product-body">
+                    <span className="dash-product-category">{p.category}</span>
+                    <h3 className="dash-product-title" title={p.productName}>
+                      {p.productName}
+                    </h3>
 
-          <div className="dashboard-horizontal-shelf">
-            {recentlyViewed.map((item) => {
-              const p = item.product;
-              if (!p) return null;
-              const hasDiscount = p.discount > 0;
-              const finalPrice = hasDiscount ? p.discountedPrice : p.productPrice;
+                    <div className="dash-product-footer">
+                      <div className="dash-price-group">
+                        <span className="dash-price-current">₹{finalPrice?.toLocaleString()}</span>
+                        {hasDiscount && (
+                          <span className="dash-price-original">₹{p.productPrice?.toLocaleString()}</span>
+                        )}
+                      </div>
 
-              return (
-                <div key={item._id || p._id} className="shelf-card">
-                  <div className="shelf-img-box">
-                    {p.imageUrl ? (
-                      <img src={p.imageUrl} alt={p.productName} />
-                    ) : (
-                      <span>📦</span>
-                    )}
-                    {p.quantity === 0 && (
-                      <span className="shelf-soldout">Sold Out</span>
-                    )}
-                  </div>
-                  <div className="shelf-details">
-                    <div className="shelf-cat">{p.category}</div>
-                    <div className="shelf-name" title={p.productName}>{p.productName}</div>
-                    <div className="shelf-price-row">
-                      <span className="shelf-price">₹{finalPrice?.toLocaleString()}</span>
-                    </div>
-                    <button
-                      type="button"
-                      className="shelf-add-btn"
-                      disabled={p.quantity === 0}
-                      onClick={() => handleAddToCart(p._id)}
-                    >
-                      {p.quantity === 0 ? 'Out of Stock' : '+ Add to Bag'}
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ─── 4. PERSONALIZED RECOMMENDATIONS ─── */}
-      {recommendations.length > 0 && (
-        <div className="dashboard-section-card">
-          <div className="section-header-flex">
-            <div>
-              <div className="section-pill">Feature 26 • Smart Personalization</div>
-              <h2 className="section-heading">✨ Recommended Just For You</h2>
-              <p className="section-desc">Top rated finds matched to your favorite categories and taste profile.</p>
-            </div>
-            <Link to="/products" className="dashboard-view-all">Browse More ›</Link>
-          </div>
-
-          <div className="dashboard-horizontal-shelf">
-            {recommendations.map((p) => {
-              const hasDiscount = p.discount > 0;
-              const finalPrice = hasDiscount ? p.discountedPrice : p.productPrice;
-
-              return (
-                <div key={p._id} className="shelf-card">
-                  <div className="shelf-img-box">
-                    {p.imageUrl ? (
-                      <img src={p.imageUrl} alt={p.productName} />
-                    ) : (
-                      <span>📦</span>
-                    )}
-                    {p.averageRating > 0 && (
-                      <span className="shelf-rating">★ {p.averageRating}</span>
-                    )}
-                  </div>
-                  <div className="shelf-details">
-                    <div className="shelf-cat">{p.category}</div>
-                    <div className="shelf-name" title={p.productName}>{p.productName}</div>
-                    <div className="shelf-price-row">
-                      <span className="shelf-price">₹{finalPrice?.toLocaleString()}</span>
-                    </div>
-                    <button
-                      type="button"
-                      className="shelf-add-btn"
-                      onClick={() => handleAddToCart(p._id)}
-                    >
-                      + Add to Bag
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ─── 5. TWO-COLUMN SPLIT: RESTOCK ALERTS & RECENT ACTIVITY ─── */}
-      <div className="dashboard-two-col-grid">
-        {/* Restock Notification Subscriptions */}
-        <div className="dashboard-section-card">
-          <div className="section-pill">Feature 31 • Stock Management</div>
-          <h2 className="section-heading" style={{ fontSize: '1.25rem' }}>🔔 Restock Subscriptions</h2>
-          <p className="section-desc">Products you've asked us to track for restock.</p>
-
-          {restockList.length === 0 ? (
-            <div className="empty-sub-block">
-              <span style={{ fontSize: '2rem' }}>🔕</span>
-              <p>No restock alerts set. When an item is out of stock, click "Notify Me" to get alerts here!</p>
-            </div>
-          ) : (
-            <div className="restock-item-list">
-              {restockList.map((p) => (
-                <div key={p._id} className="restock-row">
-                  <div className="restock-thumb">
-                    {p.imageUrl ? <img src={p.imageUrl} alt={p.productName} /> : '📦'}
-                  </div>
-                  <div className="restock-info">
-                    <div className="restock-title">{p.productName}</div>
-                    <div className="restock-status">
-                      {p.quantity > 0 ? (
-                        <span className="restock-badge in-stock">🎉 Restocked! ({p.quantity} available)</span>
-                      ) : (
-                        <span className="restock-badge pending">⏳ Still Out of Stock</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="restock-actions">
-                    {p.quantity > 0 && (
                       <button
                         type="button"
-                        className="shop-btn-primary"
-                        style={{ padding: '6px 10px', fontSize: '0.8rem' }}
+                        className="dash-add-cart-btn"
                         onClick={() => handleAddToCart(p._id)}
                       >
-                        Buy Now
+                        + Add
                       </button>
-                    )}
-                    <button
-                      type="button"
-                      className="remove-icon-btn"
-                      title="Unsubscribe alert"
-                      onClick={() => handleUnsubscribeRestock(p._id)}
-                    >
-                      🗑️
-                    </button>
+                    </div>
                   </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* ── 7. Split Subcards: Restock Subscriptions & Recent Activity ── */}
+      <section className="dash-dual-grid">
+        {/* Restock Notifications */}
+        <div className="dash-subcard">
+          <h3 className="dash-subcard-title">
+            <span>🔔</span> Restock Notifications
+          </h3>
+
+          {restockList.length === 0 ? (
+            <div className="dash-empty-note">
+              No restock alerts set. When an out-of-stock item arrives, we'll notify you here!
+            </div>
+          ) : (
+            <div className="dash-restock-list">
+              {restockList.map((p) => (
+                <div key={p._id} className="dash-restock-row">
+                  {p.imageUrl ? (
+                    <img src={p.imageUrl} alt={p.productName} className="dash-restock-thumb" />
+                  ) : (
+                    <div className="dash-restock-thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📦</div>
+                  )}
+
+                  <div className="dash-restock-details">
+                    <div className="dash-restock-name">{p.productName}</div>
+                    <div className="dash-restock-tag">
+                      {p.quantity > 0 ? '🎉 Restocked!' : '⏳ Still tracking'}
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="dash-unsub-btn"
+                    onClick={() => handleUnsubscribeRestock(p._id)}
+                    title="Remove alert"
+                  >
+                    ✕
+                  </button>
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        {/* Shopping Activity History */}
-        <div className="dashboard-section-card">
-          <div className="section-pill">Feature 27 • Activity Log</div>
-          <h2 className="section-heading" style={{ fontSize: '1.25rem' }}>📜 Shopping Activity History</h2>
-          <p className="section-desc">Timeline of your recent actions on NOVA.</p>
+        {/* Recent Shopping Activity */}
+        <div className="dash-subcard">
+          <h3 className="dash-subcard-title">
+            <span>⚡</span> Recent Activity
+          </h3>
 
           {activityHistory.length === 0 ? (
-            <div className="empty-sub-block">
-              <span style={{ fontSize: '2rem' }}>🕒</span>
-              <p>No recent activity recorded yet. Browse products or add items to your cart to see your timeline!</p>
+            <div className="dash-empty-note">
+              Your recent shopping interactions will appear here.
             </div>
           ) : (
-            <div className="activity-timeline">
-              {activityHistory.slice(0, 8).map((act, idx) => {
-                let icon = '🛍️';
-                if (act.action === 'placed_order') icon = '🎉';
-                else if (act.action === 'added_to_wishlist') icon = '❤️';
-                else if (act.action === 'viewed_product') icon = '👀';
-                else if (act.action === 'optimized_cart') icon = '✨';
-
-                return (
-                  <div key={idx} className="timeline-item">
-                    <div className="timeline-icon-wrap">{icon}</div>
-                    <div className="timeline-content">
-                      <div className="timeline-desc">{act.details || act.productName || act.action}</div>
-                      <div className="timeline-time">
-                        {new Date(act.timestamp).toLocaleString('en-IN', {
-                          dateStyle: 'short',
-                          timeStyle: 'short',
-                        })}
-                      </div>
-                    </div>
+            <div className="dash-activity-list">
+              {activityHistory.slice(0, 5).map((act, i) => (
+                <div key={i} className="dash-activity-row">
+                  <div className="dash-activity-icon">
+                    {act.action === 'placed_order' ? '🎉' : act.action === 'added_to_cart' ? '🛍️' : '👁️'}
                   </div>
-                );
-              })}
+                  <div className="dash-activity-desc">
+                    {act.details || act.action?.replace('_', ' ')}
+                  </div>
+                  <span className="dash-activity-time">
+                    {new Date(act.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              ))}
             </div>
           )}
         </div>
-      </div>
+      </section>
 
       <Toast message={toast} />
     </div>
   );
 }
-

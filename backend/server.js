@@ -5,7 +5,6 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require("express-rate-limit");
 const connectDB = require("./config/db");
-const sanitize = require("./middleware/sanitize");
 
 dotenv.config();
 connectDB();
@@ -34,7 +33,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// 🛡️ NoSQL Injection Protection (express-mongo-sanitize)
 app.use(
   mongoSanitize({
     replaceWith: "_",
@@ -43,9 +41,6 @@ app.use(
     },
   })
 );
-
-// 🛡️ Custom deep sanitization (extra layer)
-app.use(sanitize);
 
 // 🛡️ Rate Limiting — prevent brute-force attacks on login/register
 const authLimiter = rateLimit({

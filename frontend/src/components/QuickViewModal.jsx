@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import SizeFitPredictor from './SizeFitPredictor';
+import SmartBundleWidget from './SmartBundleWidget';
 
 export default function QuickViewModal({
   product,
@@ -143,6 +145,9 @@ export default function QuickViewModal({
               )}
             </div>
 
+            {/* 🌟 SIZE & FIT PREDICTOR (FOR CLOTHING & FOOTWEAR) */}
+            <SizeFitPredictor productId={product._id} category={product.category} />
+
             {/* Description */}
             <div className="quickview-desc">
               <h4>Product Details</h4>
@@ -231,6 +236,8 @@ export default function QuickViewModal({
                 </div>
               )}
             </div>
+            {/* 🌟 SMART BUNDLE (“COMPLETE THE LOOK”) */}
+            <SmartBundleWidget productId={product._id} onToast={showToast} />
           </div>
         </div>
       </div>

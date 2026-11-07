@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import SpinWheelModal from './SpinWheelModal';
+import StyleQuizModal from './StyleQuizModal';
 
 export default function Navbar() {
-  const { user, token, logout, cartCount, darkMode, toggleDarkMode, compareItems } = useAuth();
+  const { user, token, logout, cartCount, refreshCartCount, darkMode, toggleDarkMode, compareItems } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -11,13 +13,18 @@ export default function Navbar() {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [categories, setCategories] = useState(['Clothing', 'Footwear', 'Electronics', 'Kitchen']);
   const [searchQuery, setSearchQuery] = useState('');
+  const [spinModalOpen, setSpinModalOpen] = useState(false);
+  const [styleQuizOpen, setStyleQuizOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close menus on route change
+  // Close menus and refresh cart count on route change
   useEffect(() => {
     setSideDrawerOpen(false);
     setProfileDropdownOpen(false);
-  }, [location.pathname, location.search]);
+    if (token) {
+      refreshCartCount();
+    }
+  }, [location.pathname, location.search, token, refreshCartCount]);
 
   // Fetch unique categories
   useEffect(() => {
@@ -141,6 +148,16 @@ export default function Navbar() {
                 <span>ALL PRODUCTS</span>
                 {isAllProductsActive && <div className="active-nav-indicator" />}
               </Link>
+
+              {/* Dedicated Cart Tab in Top Nav */}
+              <Link
+                to="/cart"
+                className={`shop-cat-link cart-nav-tab ${location.pathname === '/cart' ? 'active' : ''}`}
+                title="Shopping Cart"
+              >
+                <span>🛒 CART {cartCount > 0 ? `(${cartCount})` : ''}</span>
+                {location.pathname === '/cart' && <div className="active-nav-indicator" />}
+              </Link>
             </nav>
           )}
 
@@ -171,7 +188,7 @@ export default function Navbar() {
             </form>
           )}
 
-          {/* Right Action Bar (Dark Mode Toggle, Profile, Wishlist, Bag) */}
+          {/* Right Action Bar (Dark Mode Toggle, Profile, Wishlist, Cart) */}
           {user ? (
             <div className="shop-header-actions">
               {/* 🌙 Dark Mode Toggle Button */}
@@ -185,26 +202,39 @@ export default function Navbar() {
                 {darkMode ? '☀️' : '🌙'}
               </button>
 
-              {/* 1. Profile Dropdown Trigger */}
+              {/* 🎁 Spin & Win Rewards Trigger */}
+              <button
+                type="button"
+                className="spin-nav-trigger-btn"
+                onClick={() => setSpinModalOpen(true)}
+                title="Daily Spin & Streak Rewards"
+              >
+                <span className="streak-flame-icon">🔥</span>
+                <span className="spin-nav-label">Spin &amp; Win</span>
+                <span className="spin-streak-count">{user?.dailyStreak?.count || 1}d</span>
+              </button>
+
+              {/* 1. Profile Dropdown Trigger (Click takes to /profile) */}
               <div
                 className="shop-action-item profile-dropdown-wrapper"
                 ref={dropdownRef}
                 onMouseEnter={() => setProfileDropdownOpen(true)}
                 onMouseLeave={() => setProfileDropdownOpen(false)}
               >
-                <button
-                  type="button"
+                <Link
+                  to="/profile"
                   className="shop-action-btn"
-                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  onClick={() => setProfileDropdownOpen(false)}
+                  title="My Profile & Settings"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
                   <span className="action-label">Profile</span>
-                </button>
+                </Link>
 
-                {/* Myntra-style Profile Flyout Menu */}
+                {/* Profile Flyout Menu */}
                 {profileDropdownOpen && (
                   <div className="shop-profile-flyout">
                     <div className="profile-flyout-header">
@@ -215,21 +245,63 @@ export default function Navbar() {
                     <div className="flyout-divider" />
 
                     <div className="flyout-links">
-                      <Link to="/dashboard" className="flyout-link highlight-link">
+                      <Link
+                        to="/profile"
+                        className="flyout-link highlight-link"
+                        onClick={() => setProfileDropdownOpen(false)}
+                      >
+                        👤 My Profile &amp; Settings
+                      </Link>
+                      <Link
+                        to="/cart"
+                        className="flyout-link"
+                        onClick={() => setProfileDropdownOpen(false)}
+                      >
+                        🛒 Shopping Cart ({cartCount})
+                      </Link>
+                      <Link
+                        to="/orders"
+                        className="flyout-link"
+                        onClick={() => setProfileDropdownOpen(false)}
+                      >
+                        📦 My Orders
+                      </Link>
+                      <Link
+                        to="/wishlist"
+                        className="flyout-link"
+                        onClick={() => setProfileDropdownOpen(false)}
+                      >
+                        ❤️ My Wishlist
+                      </Link>
+                      <Link
+                        to="/dashboard"
+                        className="flyout-link"
+                        onClick={() => setProfileDropdownOpen(false)}
+                      >
                         ✨ Smart Dashboard
                       </Link>
-                      <Link to="/orders" className="flyout-link">
-                        Orders
-                      </Link>
-                      <Link to="/wishlist" className="flyout-link">
-                        Wishlist
-                      </Link>
-                      <Link to="/cart" className="flyout-link">
-                        Shopping Bag ({cartCount})
-                      </Link>
-                      <Link to="/profile" className="flyout-link">
-                        My Profile &amp; Budget
-                      </Link>
+                      <button
+                        type="button"
+                        className="flyout-link"
+                        style={{ width: '100%', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer' }}
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          setSpinModalOpen(true);
+                        }}
+                      >
+                        🎁 Spin-the-Wheel &amp; Streaks
+                      </button>
+                      <button
+                        type="button"
+                        className="flyout-link"
+                        style={{ width: '100%', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer' }}
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          setStyleQuizOpen(true);
+                        }}
+                      >
+                        🎨 Take 20s Style Quiz
+                      </button>
                     </div>
 
                     <div className="flyout-divider" />
@@ -255,7 +327,7 @@ export default function Navbar() {
               </div>
 
               {/* 2. Wishlist Button */}
-              <Link to="/wishlist" className="shop-action-item">
+              <Link to="/wishlist" className="shop-action-item" title="Wishlist">
                 <div className="shop-action-btn">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -264,15 +336,15 @@ export default function Navbar() {
                 </div>
               </Link>
 
-              {/* 3. Bag Button */}
-              <Link to="/cart" className="shop-action-item">
+              {/* 3. Cart Button (Explicit Cart Option) */}
+              <Link to="/cart" className="shop-action-item" title="Shopping Cart">
                 <div className="shop-action-btn bag-btn">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                    <line x1="3" y1="6" x2="21" y2="6" />
-                    <path d="M16 10a4 4 0 0 1-8 0" />
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                   </svg>
-                  <span className="action-label">Bag</span>
+                  <span className="action-label">Cart</span>
                   {cartCount > 0 && (
                     <span className="shop-bag-badge">{cartCount}</span>
                   )}
@@ -280,9 +352,22 @@ export default function Navbar() {
               </Link>
             </div>
           ) : (
-            <div className="shop-auth-btns">
-              <Link to="/login" className="shop-login-link">Log In</Link>
-              <Link to="/register" className="shop-signup-btn">Sign Up</Link>
+            <div className="shop-header-actions">
+              <Link to="/cart" className="shop-action-item" title="Shopping Cart">
+                <div className="shop-action-btn bag-btn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                  </svg>
+                  <span className="action-label">Cart</span>
+                  {cartCount > 0 && <span className="shop-bag-badge">{cartCount}</span>}
+                </div>
+              </Link>
+              <div className="shop-auth-btns">
+                <Link to="/login" className="shop-login-link">Log In</Link>
+                <Link to="/register" className="shop-signup-btn">Sign Up</Link>
+              </div>
             </div>
           )}
         </div>
@@ -365,11 +450,19 @@ export default function Navbar() {
               <div className="drawer-cat-section">
                 <div className="drawer-heading">MY ACCOUNT</div>
                 <Link
+                  to="/cart"
+                  className="drawer-cat-item"
+                  onClick={() => setSideDrawerOpen(false)}
+                >
+                  <span>🛒 Shopping Cart ({cartCount})</span>
+                  <span className="drawer-arrow">›</span>
+                </Link>
+                <Link
                   to="/orders"
                   className="drawer-cat-item"
                   onClick={() => setSideDrawerOpen(false)}
                 >
-                  <span>My Orders</span>
+                  <span>📦 My Orders</span>
                   <span className="drawer-arrow">›</span>
                 </Link>
                 <Link
@@ -377,15 +470,7 @@ export default function Navbar() {
                   className="drawer-cat-item"
                   onClick={() => setSideDrawerOpen(false)}
                 >
-                  <span>My Wishlist</span>
-                  <span className="drawer-arrow">›</span>
-                </Link>
-                <Link
-                  to="/cart"
-                  className="drawer-cat-item"
-                  onClick={() => setSideDrawerOpen(false)}
-                >
-                  <span>Shopping Bag ({cartCount})</span>
+                  <span>❤️ My Wishlist</span>
                   <span className="drawer-arrow">›</span>
                 </Link>
                 <Link
@@ -393,9 +478,33 @@ export default function Navbar() {
                   className="drawer-cat-item"
                   onClick={() => setSideDrawerOpen(false)}
                 >
-                  <span>Profile &amp; Settings</span>
+                  <span>👤 Profile &amp; Settings</span>
                   <span className="drawer-arrow">›</span>
                 </Link>
+                <button
+                  type="button"
+                  className="drawer-cat-item"
+                  style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+                  onClick={() => {
+                    setSideDrawerOpen(false);
+                    setSpinModalOpen(true);
+                  }}
+                >
+                  <span>🎁 Spin &amp; Win Rewards (🔥 {user?.dailyStreak?.count || 1}d)</span>
+                  <span className="drawer-arrow">›</span>
+                </button>
+                <button
+                  type="button"
+                  className="drawer-cat-item"
+                  style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+                  onClick={() => {
+                    setSideDrawerOpen(false);
+                    setStyleQuizOpen(true);
+                  }}
+                >
+                  <span>🎨 Style Quiz &amp; Personalization</span>
+                  <span className="drawer-arrow">›</span>
+                </button>
               </div>
 
               <div className="drawer-hr" />
@@ -422,6 +531,10 @@ export default function Navbar() {
           </aside>
         </>
       )}
+
+      {/* Rewards & Style Quiz Modals */}
+      <SpinWheelModal isOpen={spinModalOpen} onClose={() => setSpinModalOpen(false)} />
+      <StyleQuizModal isOpen={styleQuizOpen} onClose={() => setStyleQuizOpen(false)} />
     </>
   );
 }

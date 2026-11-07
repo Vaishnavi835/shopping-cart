@@ -1,23 +1,73 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import './AuthSplit.css';
 
 export default function Login() {
-  const [form, setForm] = useState({ emailId: '', password: '' });
-  const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
+  const [form, setForm] = useState({
+    emailId: '',
+    password: '',
+  });
+
+  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  // 🌟 Live Dynamic State
+  const [liveShoppers, setLiveShoppers] = useState(152);
+  const [recentOrderIndex, setRecentOrderIndex] = useState(0);
+  const [flashSeconds, setFlashSeconds] = useState(792);
+
+  const liveOrders = [
+    { name: 'Sneha Rao', city: 'Hyderabad', item: 'Active Noise-Cancelling Buds', price: '₹2,499', time: '8s ago', avatar: '👩‍💼', tag: 'Electronics' },
+    { name: 'Kabir Mehta', city: 'Pune', item: 'Breathable Running Shoes', price: '₹1,499', time: '21s ago', avatar: '🏃‍♂️', tag: 'Footwear' },
+    { name: 'Tanya Sen', city: 'Chennai', item: 'Stainless Steel Cookware Set', price: '₹4,999', time: 'Just now', avatar: '👩‍🍳', tag: 'Kitchen' },
+    { name: 'Varun Nair', city: 'Kochi', item: 'Ergonomic Gaming Mouse', price: '₹1,999', time: '41s ago', avatar: '🎮', tag: 'Gaming' },
+  ];
+
+  useEffect(() => {
+    // Gentle slow shopper fluctuation (every 8s)
+    const shopperInterval = setInterval(() => {
+      setLiveShoppers((prev) => Math.max(120, prev + (Math.floor(Math.random() * 5) - 2)));
+    }, 8000);
+
+    // Smooth order rotation (every 6.5s)
+    const orderInterval = setInterval(() => {
+      setRecentOrderIndex((prev) => (prev + 1) % liveOrders.length);
+    }, 6500);
+
+    const timerInterval = setInterval(() => {
+      setFlashSeconds((prev) => (prev > 0 ? prev - 1 : 900));
+    }, 1000);
+
+    return () => {
+      clearInterval(shopperInterval);
+      clearInterval(orderInterval);
+      clearInterval(timerInterval);
+    };
+  }, []);
+
+  const formatTimer = (sec) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.emailId);
+  const currentOrder = liveOrders[recentOrderIndex];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     if (!form.emailId.trim() || !form.password) {
-      setError('Please enter both your email address and password.');
+      setError('Please enter both email and password.');
       return;
     }
 
@@ -40,152 +90,205 @@ export default function Login() {
         setError(data.message || 'Invalid email or password.');
       }
     } catch {
-      setError('Network error. Is the backend server running?');
+      setError('Unable to reach server. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="classy-auth-page">
-      {/* Dynamic Animated Ambient Background Orbs */}
-      <div className="ambient-orb orb-purple"></div>
-      <div className="ambient-orb orb-cyan"></div>
-      <div className="ambient-orb orb-pink"></div>
-
-      <div className="classy-auth-card">
-        {/* Brand Header */}
-        <div className="classy-brand-header">
-          <div className="classy-logo-pill">
-            <svg width="20" height="20" viewBox="0 0 36 36" fill="none">
-              <rect width="36" height="36" rx="9" fill="url(#nova-auth-grad)" />
-              <path d="M11 25V11L25 25V11" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M25 6.5L25.8 8.5L28 9.3L25.8 10.1L25 12.1L24.2 10.1L22 9.3L24.2 8.5Z" fill="#fff3e0" />
-              <defs>
-                <linearGradient id="nova-auth-grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#c94b72" />
-                  <stop offset="1" stopColor="#d4a373" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <span className="logo-text">NOVA</span>
+    <div className="auth-light-wrapper">
+      <div className="auth-light-card">
+        {/* Left Column: Light Clean Sign In Form */}
+        <div className="auth-light-left">
+          <div className="auth-brand-badge">
+            <span className="brand-dot"></span> NOVA Official
           </div>
-          <h1 className="classy-title">Welcome Back</h1>
-          <p className="classy-subtitle">Sign in to your NOVA personal account</p>
-        </div>
 
-        {/* Navigation Tabs */}
-        <div className="classy-nav-tabs">
-          <button type="button" className="classy-tab active">Log In</button>
-          <Link to="/register" className="classy-tab">Register</Link>
-        </div>
-
-        {/* Error Notification Banner */}
-        {error && (
-          <div className="classy-alert classy-alert-error">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            <span>{error}</span>
+          <div className="auth-light-header">
+            <h1 className="auth-title-clean">Welcome back</h1>
+            <p className="auth-subtitle-clean">Sign in to your personal shopping account.</p>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} noValidate className="classy-form">
-          {/* Email Field */}
-          <div className="classy-input-group">
-            <label htmlFor="login-email">Email Address</label>
-            <div className="classy-input-container">
-              <span className="classy-input-icon">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <polyline points="22,6 12,13 2,6" />
-                </svg>
-              </span>
-              <input
-                id="login-email"
-                type="email"
-                name="emailId"
-                placeholder="name@company.com"
-                value={form.emailId}
-                onChange={handleChange}
-                required
-                autoComplete="email"
-              />
+          {error && <div className="auth-alert-error">⚠️ {error}</div>}
+
+          <form onSubmit={handleSubmit} className="auth-form-clean">
+            {/* Email */}
+            <div className="auth-field-clean">
+              <label>Email</label>
+              <div className="input-with-check-light">
+                <input
+                  type="email"
+                  name="emailId"
+                  placeholder="name@email.com"
+                  value={form.emailId}
+                  onChange={handleChange}
+                  required
+                />
+                {isEmailValid && (
+                  <span className="check-badge-light" title="Valid email format">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5">
+                      <circle cx="12" cy="12" r="10" stroke="#10b981" />
+                      <polyline points="16 9 10 15 7 12" />
+                    </svg>
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Password Field */}
-          <div className="classy-input-group">
-            <div className="label-with-action">
-              <label htmlFor="login-password">Password</label>
-            </div>
-            <div className="classy-input-container">
-              <span className="classy-input-icon">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-              </span>
+            {/* Password */}
+            <div className="auth-field-clean">
+              <label>Password</label>
               <input
-                id="login-password"
-                type={showPassword ? 'text' : 'password'}
+                type="password"
                 name="password"
                 placeholder="••••••••••••"
                 value={form.password}
                 onChange={handleChange}
                 required
-                autoComplete="current-password"
               />
-              <button
-                type="button"
-                className="classy-eye-btn"
-                onClick={() => setShowPassword(!showPassword)}
-                title={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                    <line x1="1" y1="1" x2="23" y2="23" />
-                  </svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                )}
-              </button>
+            </div>
+
+            {/* Remember me */}
+            <label className="checkbox-clean">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              <span>Remember me for 30 days</span>
+            </label>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="btn-primary-clean"
+              disabled={loading}
+            >
+              {loading ? 'Signing in...' : 'Sign in'}
+            </button>
+
+            {/* Switch to Register */}
+            <div className="switch-text-clean">
+              Don&apos;t have an account? <Link to="/register">Create account</Link>
+            </div>
+          </form>
+        </div>
+
+        {/* Right Column: High-End Live Interactive Experience */}
+        <div className="auth-light-right">
+          {/* Header */}
+          <div className="right-card-header">
+            <h2 className="what-you-get-clean">What you get</h2>
+            <div className="live-pill-indicator">
+              <span className="live-pulse-dot"></span>
+              <span className="live-pulse-text">LIVE ACTIVITY</span>
             </div>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="classy-submit-btn"
-            disabled={loading}
-          >
-            {loading ? (
-              <span className="classy-loader-inline">
-                <span className="spinner-ring"></span>
-                <span>Signing in...</span>
-              </span>
-            ) : (
-              <span className="btn-content">
-                <span>Sign In to Account</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
+          {/* Benefits List */}
+          <ul className="benefits-list-clean">
+            <li className="benefit-row-clean">
+              <div className="benefit-icon-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                 </svg>
-              </span>
-            )}
-          </button>
-        </form>
+              </div>
+              <div className="benefit-content">
+                <strong>Wishlists you can share</strong>
+                <span>Collaborate with friends and family seamlessly</span>
+              </div>
+            </li>
 
-        {/* Footer */}
-        <div className="classy-auth-footer">
-          <span>Don&apos;t have an account yet?</span>
-          <Link to="/register" className="classy-link-highlight">Create Account</Link>
+            <li className="benefit-row-clean">
+              <div className="benefit-icon-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+              </div>
+              <div className="benefit-content">
+                <strong>Price drop alerts</strong>
+                <span>Get notified instantly when saved products drop</span>
+              </div>
+            </li>
+
+            <li className="benefit-row-clean">
+              <div className="benefit-icon-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.2">
+                  <rect x="1" y="3" width="15" height="13" />
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                  <circle cx="5.5" cy="18.5" r="2.5" />
+                  <circle cx="18.5" cy="18.5" r="2.5" />
+                </svg>
+              </div>
+              <div className="benefit-content">
+                <strong>Live order tracking</strong>
+                <span>Real-time dispatch updates with precise courier ETA</span>
+              </div>
+            </li>
+
+            <li className="benefit-row-clean">
+              <div className="benefit-icon-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.2">
+                  <polyline points="20 12 20 22 4 22 4 12" />
+                  <rect x="2" y="7" width="20" height="5" />
+                  <line x1="12" y1="22" x2="12" y2="7" />
+                  <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+                  <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+                </svg>
+              </div>
+              <div className="benefit-content">
+                <strong>Welcome offer on first order</strong>
+                <span>Flat 20% instant discount applied at checkout</span>
+              </div>
+            </li>
+          </ul>
+
+          {/* 🌟 ENHANCED LIVE SHOWCASE CARD */}
+          <div className="live-interactive-card">
+            {/* Live Stats Header */}
+            <div className="live-card-topbar">
+              <div className="live-stat-badge">
+                <span className="live-green-radar"></span>
+                <span><strong>{liveShoppers}</strong> shoppers active now</span>
+              </div>
+              <div className="live-flash-timer">
+                ⚡ Offer ends in <strong>{formatTimer(flashSeconds)}</strong>
+              </div>
+            </div>
+
+            {/* Live Real-Time Purchase Activity Tile with Smooth Animated Transition */}
+            <div className="live-order-tile" key={recentOrderIndex}>
+              <div className="live-avatar-circle">{currentOrder.avatar}</div>
+              <div className="live-order-info">
+                <div className="live-buyer-row">
+                  <span className="buyer-name">{currentOrder.name}</span>
+                  <span className="buyer-city">📍 {currentOrder.city}</span>
+                </div>
+                <div className="buyer-product-name">{currentOrder.item}</div>
+                <div className="buyer-meta">
+                  <span className="buyer-price">{currentOrder.price}</span>
+                  <span className="buyer-tag">{currentOrder.tag}</span>
+                  <span className="buyer-time">✓ {currentOrder.time}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Smooth live transition ticker line */}
+            <div className="live-cycle-bar">
+              <div className="live-cycle-fill" key={`bar-${recentOrderIndex}`}></div>
+            </div>
+
+            {/* Live Verification Bar */}
+            <div className="live-security-strip">
+              <span>🛡️ 256-Bit SSL Encrypted</span>
+              <span>•</span>
+              <span>⭐ 4.9/5 Rating</span>
+              <span>•</span>
+              <span>⚡ Fast Delivery</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

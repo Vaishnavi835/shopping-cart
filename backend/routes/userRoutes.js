@@ -57,11 +57,30 @@ router.get("/me", protect, async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found." });
     return res.status(200).json({
       user: {
+        _id: user._id,
         username: user.username,
         emailId: user.emailId,
         age: user.age,
+        phone: user.phone || "",
+        address: user.address || { street: "", city: "", state: "", postalCode: "", country: "India" },
         budget: user.budget || 0,
         darkMode: user.darkMode || false,
+        ordersCount: user.orderHistory?.length || 0,
+        wishlistCount: user.wishlist?.length || 0,
+        cartCount: user.cart?.reduce((s, i) => s + (i.quantity || 1), 0) || 0,
+        sizingProfile: user.sizingProfile || {
+          height: 172,
+          weight: 68,
+          preferredFit: "regular",
+          topSize: "M",
+          bottomSize: "32",
+          shoeSize: "9",
+        },
+        styleQuiz: user.styleQuiz || { completed: false },
+        rewardCoins: user.rewardCoins ?? 50,
+        dailyStreak: user.dailyStreak || { count: 1, lastLoginDate: new Date() },
+        claimedCoupons: user.claimedCoupons || [],
+        createdAt: user.createdAt,
       },
     });
   } catch (err) {
@@ -71,22 +90,60 @@ router.get("/me", protect, async (req, res) => {
 
 // ─── PUT /api/users ─── Update all editable fields (protected)
 router.put("/", protect, async (req, res) => {
-  const { username, age, password } = req.body;
+  const { username, age, phone, address, budget, password } = req.body;
 
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found." });
 
-    if (!username || !age || !password) {
-      return res.status(400).json({ message: "All fields (username, age, password) are required for PUT." });
+    if (username) user.username = username;
+    if (age !== undefined) user.age = Number(age);
+    if (phone !== undefined) user.phone = phone;
+    if (address !== undefined) {
+      user.address = {
+        street: address.street || "",
+        city: address.city || "",
+        state: address.state || "",
+        postalCode: address.postalCode || "",
+        country: address.country || "India",
+      };
+    }
+    if (budget !== undefined) user.budget = Number(budget);
+    if (password && password.length >= 6) {
+      user.password = password; // will be hashed by pre-save hook
     }
 
-    user.username = username;
-    user.age = age;
-    user.password = password; // will be hashed by pre-save hook
     await user.save();
 
-    return res.status(200).json({ message: "User profile fully updated successfully." });
+    return res.status(200).json({
+      message: "Profile updated successfully! ✨",
+      user: {
+        _id: user._id,
+        username: user.username,
+        emailId: user.emailId,
+        age: user.age,
+        phone: user.phone || "",
+        address: user.address,
+        budget: user.budget || 0,
+        darkMode: user.darkMode,
+        ordersCount: user.orderHistory?.length || 0,
+        wishlistCount: user.wishlist?.length || 0,
+        cartCount: user.cart?.reduce((s, i) => s + (i.quantity || 1), 0) || 0,
+        sizingProfile: user.sizingProfile || {
+          height: 172,
+          weight: 68,
+          preferredFit: "regular",
+          topSize: "M",
+          bottomSize: "32",
+          shoeSize: "9",
+        },
+        styleQuiz: user.styleQuiz || { completed: false },
+        rewardCoins: user.rewardCoins ?? 50,
+        dailyStreak: user.dailyStreak || { count: 1, lastLoginDate: new Date() },
+        claimedCoupons: user.claimedCoupons || [],
+        createdAt: user.createdAt,
+      },
+    });
   } catch (err) {
     return res.status(500).json({ message: "Server error: " + err.message });
   }
@@ -98,18 +155,59 @@ router.patch("/", protect, async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found." });
 
-    const allowedFields = ["username", "age", "darkMode", "budget"];
-    allowedFields.forEach((field) => {
-      if (req.body[field] !== undefined) user[field] = req.body[field];
-    });
+    if (req.body.username !== undefined) user.username = req.body.username;
+    if (req.body.age !== undefined) user.age = Number(req.body.age);
+    if (req.body.phone !== undefined) user.phone = req.body.phone;
+    if (req.body.budget !== undefined) user.budget = Number(req.body.budget);
+    if (req.body.darkMode !== undefined) user.darkMode = Boolean(req.body.darkMode);
+    if (req.body.address !== undefined) {
+      user.address = {
+        street: req.body.address.street || user.address?.street || "",
+        city: req.body.address.city || user.address?.city || "",
+        state: req.body.address.state || user.address?.state || "",
+        postalCode: req.body.address.postalCode || user.address?.postalCode || "",
+        country: req.body.address.country || user.address?.country || "India",
+      };
+    }
 
-    // Handle password separately (needs hashing)
+    // Handle password change separately (if provided)
     if (req.body.password) {
+      if (req.body.password.length < 6) {
+        return res.status(400).json({ message: "New password must be at least 6 characters." });
+      }
       user.password = req.body.password;
     }
 
     await user.save();
-    return res.status(200).json({ message: "User profile partially updated successfully." });
+    return res.status(200).json({
+      message: "Profile updated successfully! ✨",
+      user: {
+        _id: user._id,
+        username: user.username,
+        emailId: user.emailId,
+        age: user.age,
+        phone: user.phone || "",
+        address: user.address,
+        budget: user.budget || 0,
+        darkMode: user.darkMode,
+        ordersCount: user.orderHistory?.length || 0,
+        wishlistCount: user.wishlist?.length || 0,
+        cartCount: user.cart?.reduce((s, i) => s + (i.quantity || 1), 0) || 0,
+        sizingProfile: user.sizingProfile || {
+          height: 172,
+          weight: 68,
+          preferredFit: "regular",
+          topSize: "M",
+          bottomSize: "32",
+          shoeSize: "9",
+        },
+        styleQuiz: user.styleQuiz || { completed: false },
+        rewardCoins: user.rewardCoins ?? 50,
+        dailyStreak: user.dailyStreak || { count: 1, lastLoginDate: new Date() },
+        claimedCoupons: user.claimedCoupons || [],
+        createdAt: user.createdAt,
+      },
+    });
   } catch (err) {
     return res.status(500).json({ message: "Server error: " + err.message });
   }

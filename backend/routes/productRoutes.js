@@ -80,5 +80,74 @@ router.post("/:id/review", protect, async (req, res) => {
   }
 });
 
+// 🌟 UNIQUE FEATURE: POST /api/products/sync-external ─── Sync from external link (DummyJSON)
+router.post("/sync-external", async (req, res) => {
+  try {
+    const response = await fetch("https://dummyjson.com/products?limit=100");
+    if (!response.ok) {
+      return res.status(500).json({ message: "Failed to fetch from external link" });
+    }
+    const data = await response.json();
+    const raw = data.products || [];
+
+    const formatCategory = (cat) => {
+      if (!cat) return "General";
+      const map = {
+        "beauty": "Beauty",
+        "fragrances": "Beauty",
+        "furniture": "Home",
+        "groceries": "Kitchen",
+        "home-decoration": "Home",
+        "kitchen-accessories": "Kitchen",
+        "laptops": "Electronics",
+        "mens-shirts": "Clothing",
+        "mens-shoes": "Footwear",
+        "mens-watches": "Accessories",
+        "mobile-accessories": "Electronics",
+        "motorcycle": "Automotive",
+        "skin-care": "Beauty",
+        "smartphones": "Electronics",
+        "sports-accessories": "Sports",
+        "sunglasses": "Accessories",
+        "tablets": "Electronics",
+        "tops": "Clothing",
+        "vehicle": "Automotive",
+        "womens-bags": "Accessories",
+        "womens-dresses": "Clothing",
+        "womens-jewellery": "Accessories",
+        "womens-shoes": "Footwear",
+        "womens-watches": "Accessories",
+      };
+      return map[cat.toLowerCase()] || cat.charAt(0).toUpperCase() + cat.slice(1);
+    };
+
+    const formatted = raw.map((p) => ({
+      productId: `EXT-${p.id}`,
+      productName: p.title || "Product",
+      productPrice: Math.round((p.price || 10) * 80),
+      category: formatCategory(p.category),
+      quantity: Math.max(15, p.stock || 45),
+      description: p.description || "High quality verified product.",
+      imageUrl: p.thumbnail || (p.images && p.images[0]) || "",
+      discount: Math.min(100, Math.max(0, Math.round(p.discountPercentage || 0))),
+      ratings: (p.reviews || []).slice(0, 3).map((r) => ({
+        rating: r.rating || 5,
+        review: r.comment || "Great product!",
+        createdAt: r.date ? new Date(r.date) : new Date(),
+      })),
+    }));
+
+    await Product.deleteMany({});
+    await Product.insertMany(formatted);
+
+    return res.status(200).json({
+      message: `Successfully synced ${formatted.length} products from external link!`,
+      count: formatted.length,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Sync error: " + err.message });
+  }
+});
+
 module.exports = router;
 

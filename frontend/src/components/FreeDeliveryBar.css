@@ -1,0 +1,64 @@
+/* ══════════════════════════════════════════════════════════════
+   FREE DELIVERY PROGRESS BAR (MODERN SAGE & MINT)
+   ══════════════════════════════════════════════════════════════ */
+
+.free-delivery-container {
+  background: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 100%);
+  border: 1.5px solid #bbf7d0;
+  border-radius: 16px;
+  padding: 0.9rem 1.25rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.05);
+}
+
+.free-delivery-text-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.86rem;
+  color: #1e293b;
+}
+
+.free-delivery-message {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.free-delivery-truck {
+  font-size: 1.1rem;
+}
+
+.free-delivery-percent {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #15803d;
+}
+
+.free-delivery-track {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 50px;
+  overflow: hidden;
+  position: relative;
+}
+
+.free-delivery-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e 0%, #10b981 100%);
+  border-radius: 50px;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.free-delivery-unlocked {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.free-delivery-unlocked .free-delivery-message {
+  color: #15803d;
+  font-weight: 800;
+}
+

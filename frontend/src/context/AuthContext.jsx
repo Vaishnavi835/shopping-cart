@@ -84,11 +84,76 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+  // Refresh user profile from backend to sync fresh rewards, sizingProfile, styleQuiz
+  const refreshUser = useCallback(async () => {
+    const currentToken = token || localStorage.getItem('token');
+    if (!currentToken) return;
+    try {
+      const res = await fetch('/api/users/me', {
+        headers: { Authorization: `Bearer ${currentToken}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user) {
+          setUser((prev) => ({ ...prev, ...data.user }));
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+      }
+    } catch {}
+  }, [token]);
+
+  // Sync cart count with backend
+  const refreshCartCount = useCallback(async () => {
+    const currentToken = token || localStorage.getItem('token');
+    if (!currentToken) {
+      setCartCount(0);
+      return;
+    }
+    try {
+      const res = await fetch('/api/cart', {
+        headers: { Authorization: `Bearer ${currentToken}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const valid = (data.cart || []).filter((i) => i && i.product && i.product._id);
+        const count = valid.reduce((sum, i) => sum + (i.quantity || 1), 0);
+        setCartCount(count);
+      }
+    } catch {}
+  }, [token]);
+
+  useEffect(() => {
+    refreshCartCount();
+    if (token) {
+      refreshUser();
+      // Auto-validate login streak
+      fetch('/api/personal/check-streak', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data && data.totalCoins !== undefined) {
+            setUser((prev) => prev ? { ...prev, rewardCoins: data.totalCoins, dailyStreak: { count: data.streakCount } } : prev);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [token, refreshCartCount, refreshUser]);
+
   const login = useCallback((userData, tokenVal) => {
     setUser(userData);
     setToken(tokenVal);
     localStorage.setItem('token', tokenVal);
     localStorage.setItem('user', JSON.stringify(userData));
+  }, []);
+
+  const updateUser = useCallback((updatedData) => {
+    setUser((prev) => {
+      const merged = { ...prev, ...updatedData };
+      localStorage.setItem('user', JSON.stringify(merged));
+      return merged;
+    });
   }, []);
 
   const logout = useCallback(() => {
@@ -123,9 +188,12 @@ export const AuthProvider = ({ children }) => {
     user,
     token,
     login,
+    updateUser,
     logout,
     cartCount,
     setCartCount,
+    refreshCartCount,
+    refreshUser,
     authFetch,
     loading,
     darkMode,
@@ -138,9 +206,12 @@ export const AuthProvider = ({ children }) => {
     user,
     token,
     login,
+    updateUser,
     logout,
     cartCount,
     setCartCount,
+    refreshCartCount,
+    refreshUser,
     authFetch,
     loading,
     darkMode,

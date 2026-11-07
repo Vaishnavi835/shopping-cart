@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Toast, useToast } from '../components/Toast';
 import CompareModal, { CompareTray } from '../components/CompareModal';
 import QuickViewModal from '../components/QuickViewModal';
+import SmartBundleWidget from '../components/SmartBundleWidget';
 
 // Star rating display component
 function Stars({ rating }) {
@@ -363,20 +364,46 @@ export default function Products() {
 
   return (
     <div className="shop-products-page">
-      {/* Breadcrumb Header Row */}
-      <div className="shop-breadcrumb-row">
-        <span className="breadcrumb-link">Home</span>
-        <span className="breadcrumb-separator">/</span>
-        <span className="breadcrumb-link">Products</span>
-        {category !== 'All' && (
-          <>
-            <span className="breadcrumb-separator">/</span>
-            <span className="breadcrumb-current">{category}</span>
-          </>
-        )}
-        <span className="breadcrumb-count">
-          - {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'}
-        </span>
+      {/* ── Top Curved Catalogue Banner (Matching Dashboard & Reference Style) ── */}
+      <div className="dash-banner-card products-banner-card">
+        <div className="dash-banner-content">
+          <div className="dash-hero-badge">
+            Home • Products
+          </div>
+          <h1 className="dash-banner-title">
+            {category === 'All' ? 'All Products' : category}
+          </h1>
+          <div className="dash-banner-subtitle">
+            {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'} available to explore
+          </div>
+        </div>
+
+        <div className="dash-banner-artwork">
+          <div className="artwork-illustration-box">
+            <span className="artwork-main-emoji">🛍️</span>
+            <div className="artwork-sub-badges">
+              <span className="art-badge">⚡ Same Day Dispatch</span>
+              <span className="art-badge">⭐ 4.9 Rating</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Category Pill Bar (Alpa / Child.com Reference Style) ── */}
+      <div className="products-pills-bar">
+        {['All', 'Electronics', 'Clothing', 'Footwear', 'Accessories', 'Kitchen', 'Sports', 'Books'].map((catName) => {
+          const isActive = category === catName;
+          return (
+            <button
+              key={catName}
+              type="button"
+              onClick={() => setCategory(catName)}
+              className={`dash-pill-btn ${isActive ? 'active' : ''}`}
+            >
+              {catName === 'All' ? '🛍️ All Products' : catName}
+            </button>
+          );
+        })}
       </div>
 
       {/* Top Search & Filter Bar */}
@@ -560,6 +587,11 @@ export default function Products() {
 
         {/* Right Product Grid Column */}
         <main className="shop-product-main">
+          {/* Smart Bundle Complete the Look */}
+          {!loading && !fetchError && (
+            <SmartBundleWidget onToast={showToast} />
+          )}
+
           {loading ? (
             <div className="shop-loader">
               <div className="shop-spinner"></div>

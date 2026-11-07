@@ -207,4 +207,143 @@ router.get("/best-value", async (req, res) => {
   }
 });
 
+// ══════════════════════════════════════════════════════════════
+// 🌟 FEATURE 3: SMART BUNDLES (“COMPLETE THE LOOK”)
+// ══════════════════════════════════════════════════════════════
+
+// ─── GET /api/smart/bundles/:productId? ─── Generate Smart Bundle
+router.get("/bundles/:productId?", async (req, res) => {
+  try {
+    const { productId } = req.params;
+    let anchorProduct = null;
+
+    if (productId && productId !== "featured") {
+      anchorProduct = await Product.findById(productId);
+    }
+
+    if (!anchorProduct) {
+      // Find a popular clothing or electronics product as anchor
+      anchorProduct = await Product.findOne({
+        category: { $in: ["Clothing", "Footwear", "Electronics"] },
+        quantity: { $gt: 0 },
+      });
+    }
+
+    if (!anchorProduct) {
+      anchorProduct = await Product.findOne({ quantity: { $gt: 0 } });
+    }
+
+    if (!anchorProduct) {
+      return res.status(404).json({ message: "No products available for bundling." });
+    }
+
+    const anchorCat = anchorProduct.category || "General";
+
+    // Determine complementary pairings
+    let targetCats = [];
+    let bundleTheme = "Complete the Look";
+
+    if (anchorCat === "Clothing") {
+      targetCats = ["Footwear", "Accessories", "Beauty"];
+      bundleTheme = "Curated Head-to-Toe Outfit";
+    } else if (anchorCat === "Footwear") {
+      targetCats = ["Clothing", "Accessories", "Sports"];
+      bundleTheme = "Active Streetwear Ensemble";
+    } else if (anchorCat === "Electronics") {
+      targetCats = ["Accessories", "Electronics"];
+      bundleTheme = "Pro Tech Ecosystem Bundle";
+    } else if (anchorCat === "Kitchen" || anchorCat === "Home") {
+      targetCats = ["Kitchen", "Home"];
+      bundleTheme = "Home & Living Essentials Set";
+    } else {
+      targetCats = ["Accessories", "Clothing", "Footwear"];
+      bundleTheme = "Everyday Essentials Bundle";
+    }
+
+    // Find 2 complementary products
+    const complementary1 = await Product.findOne({
+      _id: { $ne: anchorProduct._id },
+      category: targetCats[0] || { $ne: anchorCat },
+      quantity: { $gt: 0 },
+    });
+
+    const complementary2 = await Product.findOne({
+      _id: { $nin: [anchorProduct._id, complementary1?._id].filter(Boolean) },
+      category: targetCats[1] || targetCats[0] || { $ne: anchorCat },
+      quantity: { $gt: 0 },
+    });
+
+    const bundleItems = [anchorProduct, complementary1, complementary2].filter(Boolean);
+
+    // Calculate bundle pricing
+    const calcDiscounted = (p) => p.productPrice * (1 - (p.discount || 0) / 100);
+    const originalTotal = bundleItems.reduce((sum, p) => sum + calcDiscounted(p), 0);
+
+    const BUNDLE_DISCOUNT_PERCENT = 15; // 15% extra off
+    const bundlePrice = parseFloat((originalTotal * (1 - BUNDLE_DISCOUNT_PERCENT / 100)).toFixed(2));
+    const savings = parseFloat((originalTotal - bundlePrice).toFixed(2));
+
+    return res.status(200).json({
+      bundleTheme,
+      bundleDiscountPercent: BUNDLE_DISCOUNT_PERCENT,
+      originalTotal: parseFloat(originalTotal.toFixed(2)),
+      bundlePrice,
+      savings,
+      itemsCount: bundleItems.length,
+      items: bundleItems,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error: " + err.message });
+  }
+});
+
+// ─── POST /api/smart/add-bundle-to-cart ─── 1-Click Add Entire Bundle
+router.post("/add-bundle-to-cart", protect, async (req, res) => {
+  try {
+    const { productIds } = req.body;
+    if (!productIds || !Array.isArray(productIds) || productIds.length === 0) {
+      return res.status(400).json({ message: "Please provide productIds array for bundle." });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    const products = await Product.find({ _id: { $in: productIds } });
+    if (products.length === 0) {
+      return res.status(404).json({ message: "Bundle products not found." });
+    }
+
+    let addedCount = 0;
+    for (const prod of products) {
+      if (prod.quantity <= 0) continue;
+      const existingIndex = user.cart.findIndex(
+        (i) => i.product.toString() === prod._id.toString()
+      );
+      if (existingIndex > -1) {
+        user.cart[existingIndex].quantity += 1;
+      } else {
+        user.cart.push({ product: prod._id, quantity: 1 });
+      }
+      addedCount++;
+    }
+
+    user.activityHistory.push({
+      action: "added_bundle_to_cart",
+      details: `Added Smart Bundle (${addedCount} items) with 15% bundle savings`,
+    });
+
+    await user.save();
+
+    const updatedUser = await User.findById(req.user.id).populate("cart.product");
+
+    return res.status(200).json({
+      message: `🎉 Smart Bundle added to cart! (${addedCount} items)`,
+      cart: updatedUser.cart,
+      cartCount: updatedUser.cart.reduce((s, i) => s + (i.quantity || 1), 0),
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error: " + err.message });
+  }
+});
+
 module.exports = router;

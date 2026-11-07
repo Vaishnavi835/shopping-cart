@@ -1,0 +1,172 @@
+/* ══════════════════════════════════════════════════════════════
+   PERSONALIZED STYLE FEED (HOMEPAGE COMPONENT)
+   ══════════════════════════════════════════════════════════════ */
+
+.style-feed-wrapper {
+  max-width: 1400px;
+  margin: 2.5rem auto;
+  padding: 0 2rem;
+}
+
+/* Invitation Banner (If not completed) */
+.style-quiz-invite-banner {
+  background: linear-gradient(135deg, #f1f8f5 0%, #e2ece6 100%);
+  border: 1.5px solid #d1fae5;
+  border-radius: 24px;
+  padding: 2.25rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  box-shadow: 0 8px 24px rgba(27, 56, 43, 0.05);
+}
+
+.invite-content-col {
+  flex: 1;
+}
+
+.invite-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.75rem;
+}
+
+.invite-spark-tag {
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 50px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.invite-reward-tag {
+  background: #fef08a;
+  color: #854d0e;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 50px;
+}
+
+.invite-headline {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 0.35rem;
+}
+
+.invite-subtext {
+  font-size: 0.92rem;
+  color: #475569;
+  max-width: 600px;
+  line-height: 1.45;
+}
+
+.invite-cta-btn {
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 28px;
+  font-size: 0.94rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.2);
+  transition: all 0.2s ease;
+}
+
+.invite-cta-btn:hover {
+  background: #1e293b;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.28);
+}
+
+/* Personalized Active Feed Header */
+.curated-header-box {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 1.25rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.curated-info-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.curated-vibe-emoji {
+  width: 44px;
+  height: 44px;
+  background: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.curated-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.curated-subtitle {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.retake-quiz-btn {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #334155;
+  border-radius: 50px;
+  padding: 8px 18px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retake-quiz-btn:hover {
+  border-color: #0f172a;
+  color: #0f172a;
+}
+
+/* Curated Products Grid */
+.curated-products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .curated-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .curated-products-grid {
+    grid-template-columns: 1fr;
+  }
+  .style-quiz-invite-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
